@@ -3,9 +3,12 @@ import { importOpportunityRows } from '../../src/lib/importOpportunities'
 import { scrapeGradcracker, DOMAIN as GRADCRACKER_DOMAIN } from './sources/gradcracker'
 import { scrapeHigherIn, DOMAIN as HIGHERIN_DOMAIN } from './sources/higherin'
 import { scrapeTargetJobs, DOMAIN as TARGETJOBS_DOMAIN } from './sources/targetjobs'
+import { scrapeTrackr, DOMAIN as TRACKR_DOMAIN } from './sources/trackr'
+import { scrapeLinkedIn, DOMAIN as LINKEDIN_DOMAIN } from './sources/linkedin'
 import { structureListings } from './structure'
 import { sendRunSummaryEmail } from './notify'
 import { sweepDeadLinks } from './linkcheck'
+import { dropCrossSourceDuplicates } from './dedupe'
 import type { RawListing } from './types'
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -36,13 +39,31 @@ async function main() {
   // Collected by the scrapers: a partial scrape stays usable, but the reason
   // it was partial has to reach the run summary rather than vanish.
   const warnings: string[] = []
-  const perSource: { name: string; scraped: number; structured: number; domain: string }[] = []
+  const perSource: { name: string; scraped: number; structured: number; domain: string; closeByAbsence: boolean }[] = []
   const allRaw: RawListing[] = []
 
-  const sources: { name: string; domain: string; run: () => Promise<RawListing[]> }[] = [
+  /* closeByAbsence: whether "missing from this run" can be taken to mean
+   * "no longer open". True for the aggregators, whose category listings are
+   * complete, and for Trackr, whose API returns the whole season. False for LinkedIn, which returns a relevance-ranked slice of a
+   * far larger result set that reshuffles between runs — a live posting
+   * dropping out of the top 50 says nothing about whether it closed. Those
+   * rows are retired by the link check (LinkedIn's "No longer accepting
+   * applications" page) instead.
+   *
+   * dedupe: drop listings already found by an earlier source this run or
+   * already open on the site. Set on the sources that mostly re-find what
+   * the aggregators carry, under URLs the importer would treat as new. */
+  const sources: {
+    name: string
+    domain: string
+    closeByAbsence: boolean
+    dedupe?: boolean
+    run: () => Promise<RawListing[]>
+  }[] = [
     {
       name: 'Gradcracker',
       domain: GRADCRACKER_DOMAIN,
+      closeByAbsence: true,
       run: async () => {
         const page = await browser.newPage({ userAgent: UA })
         try { return await scrapeGradcracker(page, warnings) } finally { await page.close() }
@@ -51,6 +72,7 @@ async function main() {
     {
       name: 'HigherIn',
       domain: HIGHERIN_DOMAIN,
+      closeByAbsence: true,
       run: async () => {
         const page = await browser.newPage({ userAgent: UA })
         try { return await scrapeHigherIn(page, warnings) } finally { await page.close() }
@@ -59,10 +81,28 @@ async function main() {
     {
       name: 'TargetJobs',
       domain: TARGETJOBS_DOMAIN,
+      closeByAbsence: true,
       run: async () => {
         const page = await browser.newPage({ userAgent: UA })
         try { return await scrapeTargetJobs(page, warnings) } finally { await page.close() }
       },
+    },
+    // The two secondary sources run last so everything before them is
+    // already collected for the de-dupe; Trackr goes first of the two since
+    // it links to the employer directly with real dates.
+    {
+      name: 'Trackr',
+      domain: TRACKR_DOMAIN,
+      closeByAbsence: true,
+      dedupe: true,
+      run: () => scrapeTrackr(warnings),
+    },
+    {
+      name: 'LinkedIn',
+      domain: LINKEDIN_DOMAIN,
+      closeByAbsence: false,
+      dedupe: true,
+      run: () => scrapeLinkedIn(warnings),
     },
   ]
 
@@ -74,7 +114,12 @@ async function main() {
       console.error(`${source.name} scrape failed:`, err)
     }
     console.log(`${source.name}: scraped ${listings.length} raw listings`)
-    perSource.push({ name: source.name, domain: source.domain, scraped: listings.length, structured: 0 })
+    if (source.dedupe && listings.length > 0) {
+      const before = listings.length
+      listings = await dropCrossSourceDuplicates(listings, allRaw)
+      console.log(`${source.name}: ${before - listings.length} already listed via another source, ${listings.length} kept`)
+    }
+    perSource.push({ name: source.name, domain: source.domain, closeByAbsence: source.closeByAbsence, scraped: listings.length, structured: 0 })
     allRaw.push(...listings)
   }
 
@@ -88,9 +133,9 @@ async function main() {
   // Only trust domains that returned enough listings to look like a real,
   // successful scrape rather than a transient failure.
   const trustedDomains = perSource
-    .filter(s => s.scraped >= MIN_LISTINGS_TO_TRUST_SOURCE)
+    .filter(s => s.closeByAbsence && s.scraped >= MIN_LISTINGS_TO_TRUST_SOURCE)
     .map(s => s.domain)
-  const untrustedSources = perSource.filter(s => s.scraped < MIN_LISTINGS_TO_TRUST_SOURCE)
+  const untrustedSources = perSource.filter(s => s.closeByAbsence && s.scraped < MIN_LISTINGS_TO_TRUST_SOURCE)
   if (untrustedSources.length > 0) {
     console.warn(
       'Not trusting these sources for the close-sweep (too few results, likely a scrape issue):',

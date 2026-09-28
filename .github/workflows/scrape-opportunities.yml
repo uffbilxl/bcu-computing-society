@@ -14,7 +14,9 @@ jobs:
     # listings, and Gemini's free tier caps us at 5 requests/min (13s between
     # batches in structure.ts), so ~68 batches alone need ~15 min. 30 was cutting
     # it close enough that a single 429 backoff would time the run out.
-    timeout-minutes: 60
+    # LinkedIn then adds ~12 min of throttled requests and ~200 more listings
+    # (~17 more Gemini batches, ~4 min), so 60 no longer left that margin.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 

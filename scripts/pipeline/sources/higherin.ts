@@ -4,17 +4,24 @@ import { paginate } from './util'
 
 export const DOMAIN = 'higherin.com'
 
-/* Sector-filtered at source. The unfiltered equivalents cover every sector
- * (578 listings against 166 here), so we were paying the LLM to read and
- * reject ~412 marketing, law and retail roles every run, and leaning on it
+/* Jobs are sector-filtered at source. The unfiltered equivalents cover every
+ * sector (578 listings against 166 here), so we were paying the LLM to read
+ * and reject ~412 marketing, law and retail roles every run, and leaning on it
  * never to misjudge one. HigherIn's own /technology facet is the same filter
  * Gradcracker and TargetJobs already get from their URLs. */
-/* The two insight facets are the only place any source carries spring weeks
- * and insight days: Gradcracker's taxonomy stops at graduate jobs,
+/* The two insight facets are the only place any aggregator carries spring
+ * weeks and insight days: Gradcracker's taxonomy stops at graduate jobs,
  * placements/internships and degree apprenticeships, and TargetJobs' IT
  * categories only ever return opportunityType Internship, Graduate job or
  * Placement. Without these two URLs the pipeline could not produce a
  * SPRING_WEEK or INSIGHT row at all.
+ *
+ * Unlike the job facets these are NOT sector-filtered. Employers file spring
+ * weeks under their own sector, so a bank's technology spring insight sits
+ * under banking-finance and /insights/technology held just 6 listings — none
+ * of them from a bank. The whole insight set is ~60 listings, so letting the
+ * LLM's relevance check sort tech streams from law and audit costs a handful
+ * of extra calls.
  *
  * They overlap (a spring insight programme shows up under both) — the
  * sourceUrl de-dupe at the bottom of this file handles that. Note there is
@@ -24,8 +31,8 @@ const SEARCH_URLS = [
   'https://higherin.com/search-jobs/internships/technology',
   'https://higherin.com/search-jobs/graduates/technology',
   'https://higherin.com/search-jobs/placements/technology',
-  'https://higherin.com/search-jobs/insights/technology',
-  'https://higherin.com/search-jobs/insight-day/technology',
+  'https://higherin.com/search-jobs/insights',
+  'https://higherin.com/search-jobs/insight-day',
 ]
 
 /* HigherIn (formerly RateMyPlacement/RateMyApprenticeship) renders results
@@ -40,9 +47,9 @@ export async function scrapeHigherIn(page: Page, warnings: string[] = []): Promi
   const listings: RawListing[] = []
 
   for (const url of SEARCH_URLS) {
-    // Every URL ends in /technology, so the category — the part that
-    // differs — is the segment before it.
-    const category = url.split('/').slice(-2)[0]
+    // The category is the segment after /search-jobs/, with or without a
+    // trailing sector facet.
+    const category = url.split('/search-jobs/')[1].split('/')[0]
 
     const cards = await paginate(
       page,

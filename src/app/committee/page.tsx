@@ -105,6 +105,11 @@ const COMMITTEE: Person[] = [
     linkedin: 'https://www.linkedin.com/in/maryam-a-259297235',
     roles: [{ group: 'leadership', title: 'Community Engagement' }],
   },
+  {
+    id: 'mursal-hottak', name: 'Mursal Hottak',
+    linkedin: 'https://www.linkedin.com/in/mursal-hottak-7b8b672a1/',
+    roles: [{ group: 'leadership', title: 'Communication and Governance Lead' }],
+  },
 
   {
     id: 'saifuddin-muhammad', name: 'Saifuddin Muhammad',

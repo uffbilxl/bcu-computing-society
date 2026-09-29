@@ -51,7 +51,7 @@ const GROUPS: Group[] = [
 
 const GROUP_BY_ID = Object.fromEntries(GROUPS.map(g => [g.id, g])) as Record<GroupId, Group>
 
-/* ── The two senior posts, shown as the masthead ───────────── */
+/* ── Featured leadership ──────────────────────────────────── */
 const LEADS: Person[] = [
   {
     id: 'bilal-arshad',
@@ -84,6 +84,10 @@ const LEADS: Person[] = [
       { group: 'research',   title: 'Head of Research', lead: true },
     ],
   },
+]
+
+/* ── Everyone else, in structural order ────────────────────── */
+const COMMITTEE: Person[] = [
   {
     id: 'tayyeb-nadeem-somro',
     name: 'Tayyeb Nadeem Somro',
@@ -95,10 +99,6 @@ const LEADS: Person[] = [
       { group: 'platforms',  title: 'Web & App Dev' },
     ],
   },
-]
-
-/* ── Everyone else, in structural order ────────────────────── */
-const COMMITTEE: Person[] = [
   {
     id: 'maryam-ahmad', name: 'Maryam Ahmad',
     linkedin: 'https://www.linkedin.com/in/maryam-a-259297235',
@@ -398,8 +398,7 @@ const DepartmentSection = forwardRef<HTMLElement, {
   stagger: boolean
   reduced: boolean
 }>(function DepartmentSection({ group, people, stagger, reduced }, ref) {
-  // The two senior posts head their own section as cards rather than being
-  // repeated in a masthead above it.
+  // Featured leads appear as cards at the top of the leadership section.
   const featured = group.id === 'leadership'
     ? people.filter(p => LEADS.some(l => l.id === p.person.id))
     : []

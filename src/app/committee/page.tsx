@@ -66,6 +66,15 @@ const LEADS: Person[] = [
     ],
   },
   {
+    id: 'haarisah-hussain',
+    name: 'Haarisah Hussain',
+    linkedin: 'https://www.linkedin.com/in/haarisah-hussain-2ba850315',
+    roles: [
+      { group: 'leadership', title: 'Vice President', lead: true },
+      { group: 'software',   title: 'Head of Software Engineering', lead: true },
+    ],
+  },
+  {
     id: 'tayyeb-nadeem-somro',
     name: 'Tayyeb Nadeem Somro',
     linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
@@ -75,15 +84,6 @@ const LEADS: Person[] = [
       { group: 'leadership', title: 'Chairman', lead: true },
       { group: 'platforms',  title: 'Web & App Dev' },
       { group: 'research',   title: 'Researcher' },
-    ],
-  },
-  {
-    id: 'haarisah-hussain',
-    name: 'Haarisah Hussain',
-    linkedin: 'https://www.linkedin.com/in/haarisah-hussain-2ba850315',
-    roles: [
-      { group: 'leadership', title: 'Vice President', lead: true },
-      { group: 'software',   title: 'Head of Software Engineering', lead: true },
     ],
   },
   {

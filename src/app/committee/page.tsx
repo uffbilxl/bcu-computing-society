@@ -93,7 +93,6 @@ const COMMITTEE: Person[] = [
     name: 'Tayyeb Nadeem Somro',
     linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
     website: 'http://tayyebns.com',
-    email: 'tayyeb.nadeemsomro@mail.bcu.ac.uk',
     roles: [
       { group: 'leadership', title: 'Chairman and Founder', lead: true },
       { group: 'platforms',  title: 'Web & App Dev' },

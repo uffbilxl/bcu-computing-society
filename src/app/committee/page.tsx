@@ -95,7 +95,7 @@ const COMMITTEE: Person[] = [
     website: 'http://tayyebns.com',
     email: 'tayyeb.nadeemsomro@mail.bcu.ac.uk',
     roles: [
-      { group: 'leadership', title: 'Chairman', lead: true },
+      { group: 'leadership', title: 'Chairman and Founder', lead: true },
       { group: 'platforms',  title: 'Web & App Dev' },
     ],
   },

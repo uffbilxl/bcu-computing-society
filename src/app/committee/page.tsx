@@ -75,6 +75,16 @@ const LEADS: Person[] = [
     ],
   },
   {
+    id: 'michael-martinak',
+    name: 'Michael Martinak',
+    linkedin: 'https://www.linkedin.com/in/profile-mmartinak/',
+    roles: [
+      { group: 'leadership', title: 'Head of Research', lead: true },
+      { group: 'cyber',      title: 'Technical Coordinator' },
+      { group: 'research',   title: 'Head of Research', lead: true },
+    ],
+  },
+  {
     id: 'tayyeb-nadeem-somro',
     name: 'Tayyeb Nadeem Somro',
     linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
@@ -83,17 +93,6 @@ const LEADS: Person[] = [
     roles: [
       { group: 'leadership', title: 'Chairman', lead: true },
       { group: 'platforms',  title: 'Web & App Dev' },
-      { group: 'research',   title: 'Researcher' },
-    ],
-  },
-  {
-    id: 'michael-martinak',
-    name: 'Michael Martinak',
-    linkedin: 'https://www.linkedin.com/in/profile-mmartinak/',
-    roles: [
-      { group: 'leadership', title: 'Head of Research', lead: true },
-      { group: 'cyber',      title: 'Technical Coordinator' },
-      { group: 'research',   title: 'Head of Research', lead: true },
     ],
   },
 ]

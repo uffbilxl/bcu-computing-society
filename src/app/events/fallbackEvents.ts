@@ -108,7 +108,7 @@ export const FALLBACK_EVENTS: SCAEvent[] = [
     id: 'welcome-week-sept-2026',
     title: 'Welcome Week: Meet the Committee',
     description:
-      'Kick off the new academic year with the SCA. Meet the committee, win prizes, and get stuck into a week of fun activities.',
+      'Kick off the new academic year with the BCUComputingSoc. Meet the committee, win prizes, and get stuck into a week of fun activities.',
     location: 'STEAMhouse',
     isOnline: false,
     date: londonTime('2026-09-14T12:00:00'),

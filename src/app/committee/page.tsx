@@ -685,7 +685,7 @@ export default function CommitteePage() {
         transition={{ duration: reduced ? 0.001 : 0.45, ease: [0.16, 1, 0.3, 1] }}
         className="mb-9"
       >
-        <span className="eyebrow mb-3 block">Student Computing Association</span>
+        <span className="eyebrow mb-3 block">BCU Computing Society</span>
         <h1
           className="display-headline mb-3"
           style={{ fontSize: 'clamp(1.75rem, 5vw, 2.75rem)', textWrap: 'balance' }}
@@ -693,7 +693,7 @@ export default function CommitteePage() {
           Meet the Committee
         </h1>
         <p className="text-sm text-[var(--color-muted)] max-w-[60ch] leading-relaxed">
-          {everyone.length} students running the SCA across {departments.length} departments and {teams.length} teams.
+          {everyone.length} students running BCUComputingSoc across {departments.length} departments and {teams.length} teams.
           Filter by the area you care about, or find someone to talk to.
         </p>
       </motion.header>

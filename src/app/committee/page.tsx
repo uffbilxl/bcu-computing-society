@@ -54,6 +54,16 @@ const GROUP_BY_ID = Object.fromEntries(GROUPS.map(g => [g.id, g])) as Record<Gro
 /* ── Featured leadership ──────────────────────────────────── */
 const LEADS: Person[] = [
   {
+    id: 'tayyeb-nadeem-somro',
+    name: 'Tayyeb Nadeem Somro',
+    linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
+    website: 'http://tayyebns.com',
+    roles: [
+      { group: 'leadership', title: 'Chairman and Founder', lead: true },
+      { group: 'platforms',  title: 'Web & App Dev' },
+    ],
+  },
+  {
     id: 'bilal-arshad',
     name: 'Bilal Arshad',
     linkedin: 'https://www.linkedin.com/in/bilal-arshad-4a07812b4/',
@@ -88,16 +98,6 @@ const LEADS: Person[] = [
 
 /* ── Everyone else, in structural order ────────────────────── */
 const COMMITTEE: Person[] = [
-  {
-    id: 'tayyeb-nadeem-somro',
-    name: 'Tayyeb Nadeem Somro',
-    linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
-    website: 'http://tayyebns.com',
-    roles: [
-      { group: 'leadership', title: 'Chairman and Founder', lead: true },
-      { group: 'platforms',  title: 'Web & App Dev' },
-    ],
-  },
   {
     id: 'maryam-ahmad', name: 'Maryam Ahmad',
     linkedin: 'https://www.linkedin.com/in/maryam-a-259297235',

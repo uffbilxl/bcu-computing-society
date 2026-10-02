@@ -5,7 +5,7 @@ import { FadeIn } from '@/components/ui/FadeIn'
 const values = [
   {
     title: 'Inclusive by design',
-    text: 'The SCA is open to every BCU computing student, regardless of year, background, or experience level. Whether you are just starting out or finishing your final year, there is a place for you here.',
+    text: 'BCUComputingSoc is open to every BCU computing student, regardless of year, background, or experience level. Whether you are just starting out or finishing your final year, there is a place for you here.',
   },
   {
     title: 'Student-led, student-first',
@@ -55,7 +55,7 @@ export default function AboutPage() {
             Who We Are
           </h1>
           <p className="text-sm text-[var(--color-muted)] max-w-lg leading-relaxed">
-            The Student Computing Association (SCA) is the computing society at Birmingham City University. We exist to support, connect, and empower every student in the computing faculty.
+            BCUComputingSoc is the computing society at Birmingham City University. We exist to support, connect, and empower every student in the computing faculty.
           </p>
         </div>
       </FadeIn>
@@ -169,14 +169,14 @@ export default function AboutPage() {
               style={{ background: 'var(--card-gradient)', borderColor: 'rgba(var(--hairline-rgb),0.07)' }}
             >
               <div className="text-[13px] font-semibold text-[var(--color-text)] mb-1.5" style={{ fontFamily: 'var(--font-geist-sans)' }}>
-                Join the SCA
+                Join BCUComputingSoc
               </div>
               <p className="text-[12px] text-[var(--color-muted)] leading-relaxed mb-4">
                 Open to all BCU computing students. Follow us and stay up to date with everything we are doing.
               </p>
               <div className="flex items-center gap-4 flex-wrap">
                 <Link
-                  href="https://www.linkedin.com/company/bcu-student-computing-association/"
+                  href="https://uk.linkedin.com/company/bcu-computing-society"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[var(--color-accent)] hover:underline focus-ring rounded"
@@ -184,7 +184,7 @@ export default function AboutPage() {
                   Follow on LinkedIn <ArrowRight size={12} aria-hidden="true" />
                 </Link>
                 <Link
-                  href="https://www.instagram.com/bcu_sca"
+                  href="https://www.instagram.com/bcucompsoc"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[var(--color-accent)] hover:underline focus-ring rounded"
@@ -201,7 +201,7 @@ export default function AboutPage() {
                 Join the committee
               </div>
               <p className="text-[12px] text-[var(--color-muted)] leading-relaxed mb-4">
-                Want to help shape the SCA? We are always looking for students to join the committee and contribute to what we build.
+                Want to help shape BCUComputingSoc? We are always looking for students to join the committee and contribute to what we build.
               </p>
               <Link
                 href="https://tally.so/r/681g7e"

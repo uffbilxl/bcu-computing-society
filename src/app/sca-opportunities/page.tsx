@@ -51,9 +51,9 @@ export default function SCAOpportunitiesPage() {
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         <p className="text-[10px] font-mono text-[var(--t4)] uppercase tracking-[0.14em] mb-1">// internal</p>
-        <h1 className="font-display text-[20px] font-black tracking-[-0.4px] text-[var(--t1)]">SCA Opportunities</h1>
+        <h1 className="font-display text-[20px] font-black tracking-[-0.4px] text-[var(--t1)]">BCUComputingSoc Opportunities</h1>
         <p className="text-[12px] text-[var(--t3)] mt-1">
-          Internal opportunities within the Student Computing Association: committee roles, volunteering, and more.
+          Internal opportunities within the BCU Computing Society: committee roles, volunteering, and more.
         </p>
       </motion.div>
 
@@ -83,10 +83,10 @@ export default function SCAOpportunitiesPage() {
                 </span>
               </div>
               <h2 className="font-display text-[17px] font-bold text-[var(--t1)] tracking-tight">
-                SCA Internship Opportunities
+                BCUComputingSoc Internship Opportunities
               </h2>
               <p className="text-[12px] font-mono text-[var(--t3)] mt-0.5">
-                BCU Student Computing Association
+                BCU Computing Society
               </p>
             </div>
             <ChevronIcon open={!!openCards['internships']} />
@@ -97,7 +97,7 @@ export default function SCAOpportunitiesPage() {
           <div className="border-t border-[var(--b1)]">
             <div className="px-6 py-5 space-y-5">
               <p className="text-[13px] text-[var(--t2)] leading-relaxed">
-                Applications are open for Web Development and Project Management internships with the SCA, across 8 positions.
+                Applications are open for Web Development and Project Management internships with the BCUComputingSoc, across 8 positions.
                 These roles are designed for students with little to no experience who want to build practical skills by working on real projects.
                 More than half of the positions will be allocated to first year students.
               </p>
@@ -209,7 +209,7 @@ export default function SCAOpportunitiesPage() {
                     Web Development Intern
                   </h2>
                   <p className="text-[12px] font-mono text-[var(--t3)] mt-0.5">
-                    BCU Student Computing Association
+                    BCU Computing Society
                   </p>
                 </div>
                 <ChevronIcon open={!!openCards['webdev']} />
@@ -220,8 +220,8 @@ export default function SCAOpportunitiesPage() {
               <div className="border-t border-[var(--b1)]">
                 <div className="px-6 py-5 space-y-5">
                   <p className="text-[13px] text-[var(--t2)] leading-relaxed">
-                    A year-long internship within the SCA&apos;s Web Division, responsible for building and maintaining the association&apos;s digital presence.
-                    You&apos;ll work on live websites used by SCA members, keeping them up to date, functional, and well-designed.
+                    A year-long internship within BCUComputingSoc&apos;s Web Division, responsible for building and maintaining the society&apos;s digital presence.
+                    You&apos;ll work on live websites used by BCUComputingSoc members, keeping them up to date, functional, and well-designed.
                     Ideal for students who want real ownership over a product and hands-on web development experience alongside their studies.
                   </p>
 
@@ -229,10 +229,10 @@ export default function SCAOpportunitiesPage() {
                     <p className="text-[11px] font-mono font-medium text-[var(--t4)] uppercase tracking-wider mb-2">What you&apos;ll do</p>
                     <ul className="space-y-1.5">
                       {[
-                        'Maintain and update existing SCA websites',
+                        'Maintain and update existing BCUComputingSoc websites',
                         'Build new pages and features as the association grows',
                         'Fix bugs and ensure cross-browser, responsive performance',
-                        'Collaborate with other SCA divisions on web needs',
+                        'Collaborate with other BCUComputingSoc divisions on web needs',
                       ].map(item => (
                         <li key={item} className="flex items-start gap-2 text-[12px] text-[var(--t2)]">
                           <span className="text-[var(--t4)] mt-0.5 flex-shrink-0">→</span>
@@ -261,7 +261,7 @@ export default function SCAOpportunitiesPage() {
 
                 <div className="px-6 py-4 border-t border-[var(--b1)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="flex flex-col gap-0.5">
-                    <p className="text-[11px] font-mono text-[var(--t4)]">Superseded by the current SCA internship intake</p>
+                    <p className="text-[11px] font-mono text-[var(--t4)]">Superseded by the current BCUComputingSoc internship intake</p>
                     <div className="flex items-center gap-1.5 text-[11px] font-mono text-[var(--t4)]">
                       <span>Organiser:</span>
                       <a href="mailto:bilal.arshad2@mail.bcu.ac.uk" className="text-[var(--t3)] hover:underline font-medium">
@@ -294,10 +294,10 @@ export default function SCAOpportunitiesPage() {
                     </span>
                   </div>
                   <h2 className="font-display text-[17px] font-bold text-[var(--t1)] tracking-tight">
-                    SCA Sports Analytics Department
+                    BCUComputingSoc Sports Analytics Department
                   </h2>
                   <p className="text-[12px] font-mono text-[var(--t3)] mt-0.5">
-                    BCU Student Computing Association · BCU Basketball
+                    BCU Computing Society · BCU Basketball
                   </p>
                 </div>
                 <ChevronIcon open={!!openCards['sports']} />
@@ -393,10 +393,10 @@ export default function SCAOpportunitiesPage() {
                     </span>
                   </div>
                   <h2 className="font-display text-[17px] font-bold text-[var(--t1)] tracking-tight">
-                    SCA Software Developers
+                    BCUComputingSoc Software Developers
                   </h2>
                   <p className="text-[12px] font-mono text-[var(--t3)] mt-0.5">
-                    CivitasAccess · Promoted by BCU Student Computing Association
+                    CivitasAccess · Promoted by BCU Computing Society
                   </p>
                 </div>
                 <ChevronIcon open={!!openCards['softwaredev']} />
@@ -407,7 +407,7 @@ export default function SCAOpportunitiesPage() {
               <div className="border-t border-[var(--b1)]">
                 <div className="px-6 py-5 space-y-5">
                   <p className="text-[13px] text-[var(--t2)] leading-relaxed">
-                    An opportunity promoted by the SCA to work with CivitasAccess, a real company building access control and visitor management software.
+                    An opportunity promoted by the BCUComputingSoc to work with CivitasAccess, a real company building access control and visitor management software.
                     3-4 students will collaborate to design and build a full stack application, working across the full development lifecycle, from planning and architecture through to deployment.
                     Ideal for students who want genuine industry experience and the chance to ship something used in a production environment.
                   </p>

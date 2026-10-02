@@ -8,7 +8,7 @@ interface Props {
 
 const perks = [
   'Organise events & workshops',
-  'Grow the SCA community',
+  'Grow the BCUComputingSoc community',
   'Build real leadership experience',
   'Network with industry professionals',
 ]
@@ -80,11 +80,11 @@ export function CommitteeModal({ onClose }: Props) {
             className="font-bold mb-3 leading-snug"
             style={{ fontSize: '1.25rem', color: 'var(--t1)', letterSpacing: '-0.02em' }}
           >
-            Join the SCA Committee
+            Join the BCUComputingSoc Committee
           </h2>
 
           <p style={{ fontSize: '0.8125rem', color: 'var(--t2)', lineHeight: 1.65, marginBottom: '0.75rem' }}>
-            The Student Computing Association is always looking for passionate BCU computing
+            The BCU Computing Society is always looking for passionate BCU computing
             students to join the committee and help shape the society.
           </p>
           <p style={{ fontSize: '0.8125rem', color: 'var(--t3)', lineHeight: 1.65, marginBottom: '1.5rem' }}>

@@ -9,7 +9,7 @@ import { ThemeToggle } from '@/components/layout/ThemeToggle'
 const navLinks = [
   { href: '/',                label: 'Home' },
   { href: '/opportunities',   label: 'Opportunities' },
-  { href: '/sca-opportunities', label: 'SCA' },
+  { href: '/sca-opportunities', label: 'BCUComputingSoc' },
   { href: '/events',          label: 'Events' },
   { href: '/committee',       label: 'Committee' },
   { href: '/research',        label: 'Research' },
@@ -155,7 +155,7 @@ export function Navbar() {
                 letterSpacing: '-0.01em',
               }}
             >
-              SCA
+              BCUComputingSoc
             </span>
             <span
               className="text-[var(--color-muted)]"
@@ -237,13 +237,13 @@ export function Navbar() {
               className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--b2)] transition-all duration-200 focus-ring"
             />
             <Link
-              href="https://www.linkedin.com/company/bcu-student-computing-association/"
+              href="https://uk.linkedin.com/company/bcu-computing-society"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-gradient px-4 py-1.5 rounded-full focus-ring"
               style={{ fontSize: '0.8125rem' }}
             >
-              Join SCA
+              Join BCUComputingSoc
             </Link>
           </div>
 
@@ -253,13 +253,13 @@ export function Navbar() {
               className="w-8 h-8 flex items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors focus-ring"
             />
             <Link
-              href="https://www.linkedin.com/company/bcu-student-computing-association/"
+              href="https://uk.linkedin.com/company/bcu-computing-society"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-gradient px-3 py-1.5 rounded-full focus-ring"
               style={{ fontSize: '0.75rem' }}
             >
-              Join SCA
+              Join BCUComputingSoc
             </Link>
             <button
               onClick={() => setMobileOpen(o => !o)}

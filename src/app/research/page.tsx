@@ -50,7 +50,7 @@ export default function ResearchPage() {
 
       {/* Header */}
       <div className="mb-12">
-        <span className="eyebrow mb-3">Student Computing Association</span>
+        <span className="eyebrow mb-3">BCU Computing Society</span>
         <h1
           className="text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-tight text-[var(--color-text)] mb-3"
           style={{ fontFamily: 'var(--font-geist-sans)' }}

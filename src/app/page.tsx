@@ -97,7 +97,7 @@ const strands = [
   { label: 'Resources',          desc: 'CV templates, cover letters & guides',        href: '/resources',                  Icon: BookOpen },
   { label: 'Graduate Roles',     desc: 'Life after university starts here',           href: '/opportunities?type=GRADUATE',    Icon: GraduationCap },
   { label: 'Spring Weeks',       desc: 'First & second year programmes',              href: '/opportunities?type=SPRING_WEEK', Icon: Zap },
-  { label: 'Meet the Committee', desc: 'The people behind the SCA',                  href: '/committee',                  Icon: Users },
+  { label: 'Meet the Committee', desc: 'The people behind the BCUComputingSoc',                  href: '/committee',                  Icon: Users },
 ]
 
 const pillars = [
@@ -362,7 +362,7 @@ export default async function HomePage() {
               style={{ fontSize: '1.125rem', maxWidth: '460px' }}
             >
               Whether you're in your first year or finishing your degree, the
-              SCA is built to support every step of your journey.
+              BCUComputingSoc is built to support every step of your journey.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link

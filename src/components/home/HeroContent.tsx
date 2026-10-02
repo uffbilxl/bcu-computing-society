@@ -97,7 +97,7 @@ export function HeroContent() {
           animate="show"
           className="eyebrow mb-8 tracking-[0.18em]"
         >
-          BCU Student Computing Association
+          BCU Computing Society
         </motion.span>
 
         {/* Display headline */}

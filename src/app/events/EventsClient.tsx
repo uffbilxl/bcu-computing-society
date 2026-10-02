@@ -441,7 +441,7 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
 
       {/* Page header */}
       <div className="mb-10">
-        <span className="eyebrow mb-3">Student Computing Association</span>
+        <span className="eyebrow mb-3">BCU Computing Society</span>
         <h1
           className="text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-tight text-[var(--color-text)] mb-2"
           style={{ fontFamily: 'var(--font-geist-sans)' }}
@@ -514,14 +514,14 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
                 Events coming soon
               </div>
               <div className="text-[13px] text-[var(--color-muted)] max-w-xs mx-auto leading-relaxed">
-                The SCA is busy planning workshops, talks, and networking events.
+                BCUComputingSoc is busy planning workshops, talks, and networking events.
                 <span className="block mt-2 text-[var(--color-text)] font-medium">
                   Stay tuned, announcements dropping soon.
                 </span>
               </div>
               <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] rounded-full text-[11px] text-[var(--color-muted)] tracking-wide">
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse inline-block" />
-                To be announced by the SCA
+                To be announced by BCUComputingSoc
               </div>
             </>
           ) : (

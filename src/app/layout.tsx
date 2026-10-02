@@ -12,18 +12,18 @@ import { FooterReportIssue } from '@/components/layout/FooterReportIssue'
 import { themeInitScript } from '@/components/layout/ThemeToggle'
 
 export const metadata: Metadata = {
-  title: 'BCUSCA - Student Computing Association',
+  title: 'BCUComputingSoc - Birmingham City University Computing Society',
   description: 'From your first lecture to your first offer.',
-  keywords: ['internship', 'placement', 'graduate', 'BCU', 'computing', 'tech', 'SCA'],
+  keywords: ['internship', 'placement', 'graduate', 'BCU', 'computing', 'tech', 'BCUComputingSoc'],
   icons: {
     icon: '/sca-logo.png',
     apple: '/sca-logo.png',
   },
   openGraph: {
-    title: 'BCUSCA - Student Computing Association: From your first lecture to your first offer.',
+    title: 'BCUComputingSoc - Birmingham City University Computing Society: From your first lecture to your first offer.',
     description: 'From your first lecture to your first offer.',
     type: 'website',
-    images: [{ url: '/sca-logo.png', width: 1080, height: 1080, alt: 'BCU Student Computing Association' }],
+    images: [{ url: '/sca-logo.png', width: 1080, height: 1080, alt: 'BCUComputingSoc - Birmingham City University Computing Society' }],
   },
   twitter: {
     card: 'summary',
@@ -65,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* Logo + tagline */}
               <div>
                 <div className="mb-4">
-                  <span className="text-xl font-bold tracking-tight text-[var(--color-text)]">SCA</span>
+                  <span className="text-xl font-bold tracking-tight text-[var(--color-text)]">BCUComputingSoc</span>
                   <p className="text-xs text-[var(--color-muted)] mt-0.5">Birmingham City University</p>
                 </div>
                 <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-[220px]">
@@ -73,19 +73,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </p>
                 <div className="flex items-center gap-2 mt-5">
                   <a
-                    href="https://www.linkedin.com/company/bcu-student-computing-association/"
+                    href="https://uk.linkedin.com/company/bcu-computing-society"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="SCA on LinkedIn"
+                    aria-label="BCUComputingSoc on LinkedIn"
                     className="w-8 h-8 rounded-full border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border)] transition-colors focus-ring"
                   >
                     <Linkedin size={15} aria-hidden="true" />
                   </a>
                   <a
-                    href="https://www.instagram.com/bcu_sca"
+                    href="https://www.instagram.com/bcucompsoc"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="SCA on Instagram"
+                    aria-label="BCUComputingSoc on Instagram"
                     className="w-8 h-8 rounded-full border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border)] transition-colors focus-ring"
                   >
                     <Instagram size={15} aria-hidden="true" />
@@ -126,7 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <div className="border-t border-[var(--color-border)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
               <span className="text-xs text-[var(--color-muted)] text-center sm:text-left">
-                © 2026 BCU SCA · Not affiliated with BCUSU, BCU CS Society, or BCU Cyber Security Society.
+                © 2026 BCUComputingSoc · Not affiliated with BCUSU, BCU CS Society, or BCU Cyber Security Society.
               </span>
               <a
                 href="https://www.keystonedigitalstrategy.co.uk"

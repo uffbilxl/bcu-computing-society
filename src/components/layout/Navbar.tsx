@@ -9,7 +9,7 @@ import { ThemeToggle } from '@/components/layout/ThemeToggle'
 const navLinks = [
   { href: '/',                label: 'Home' },
   { href: '/opportunities',   label: 'Opportunities' },
-  { href: '/sca-opportunities', label: 'BCUComputingSoc' },
+  { href: '/sca-opportunities', label: 'Internal Roles' },
   { href: '/events',          label: 'Events' },
   { href: '/committee',       label: 'Committee' },
   { href: '/research',        label: 'Research' },

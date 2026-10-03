@@ -85,7 +85,7 @@ export const DEFAULT_CV: CVData = {
     },
     {
       id: 'exp-2',
-      org: 'BCU Student Computing Association',
+      org: 'BCU Computing Society',
       role: 'Data Analytics Intern',
       location: 'Birmingham, UK',
       dates: 'Sep 2025 – May 2026',
@@ -120,7 +120,7 @@ export const DEFAULT_CV: CVData = {
   extracurricular: [
     {
       id: 'ext-1',
-      org: 'BCU Student Computing Association',
+      org: 'BCU Computing Society',
       role: 'Events Coordinator',
       location: 'Birmingham, UK',
       dates: 'May 2026 – Present',

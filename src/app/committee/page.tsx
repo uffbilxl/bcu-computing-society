@@ -127,6 +127,11 @@ const COMMITTEE: Person[] = [
     linkedin: 'https://www.linkedin.com/in/daeron-wallace/',
     roles: [{ group: 'cyber', title: 'Coordinator' }],
   },
+  {
+    id: 'arsalan-abid', name: 'Arsalan Abid',
+    linkedin: 'https://www.linkedin.com/in/arsalan-fareed-abid-a9275a250/',
+    roles: [{ group: 'cyber', title: 'Coordinator' }],
+  },
 
   {
     id: 'mukul-sharma', name: 'Mukul Sharma',

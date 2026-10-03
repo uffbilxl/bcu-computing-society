@@ -181,23 +181,6 @@ export function HeroContent() {
           </Link>
         </motion.div>
 
-        {/* Disclaimer */}
-        <motion.p
-          custom={4}
-          variants={fadeUp}
-          initial="hidden"
-          animate="show"
-          style={{
-            marginTop: '2.5rem',
-            fontSize: '11px',
-            color: 'var(--hero-text)',
-            maxWidth: '360px',
-            lineHeight: 1.6,
-          }}
-        >
-          Not affiliated with BCUSU, BCU Computer Science Society, or BCU
-          Cyber Security Society.
-        </motion.p>
       </motion.div>
 
       {/* ── Scroll indicator ── */}

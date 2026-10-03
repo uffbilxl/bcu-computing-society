@@ -126,7 +126,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <div className="border-t border-[var(--color-border)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
               <span className="text-xs text-[var(--color-muted)] text-center sm:text-left">
-                © 2026 BCUComputingSoc · Not affiliated with BCUSU, BCU CS Society, or BCU Cyber Security Society.
+                © 2026 BCUComputingSoc
               </span>
               <a
                 href="https://www.keystonedigitalstrategy.co.uk"

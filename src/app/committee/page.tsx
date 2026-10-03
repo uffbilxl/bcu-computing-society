@@ -7,7 +7,7 @@ import { Globe, Mail, ArrowUpRight } from 'lucide-react'
 /* ── Types ─────────────────────────────────────────────────── */
 type GroupId =
   | 'leadership' | 'software' | 'cyber' | 'ai'
-  | 'digital' | 'compsci' | 'marketing' | 'platforms' | 'research'
+  | 'compsci' | 'marketing' | 'platforms' | 'research'
 
 interface Group {
   id: GroupId
@@ -42,7 +42,6 @@ const GROUPS: Group[] = [
   { id: 'software',   label: 'Software Engineering',    short: 'Software',  color: '#22c55e', kind: 'department' },
   { id: 'cyber',      label: 'Cyber Security',          short: 'Cyber',     color: '#ef4444', kind: 'department' },
   { id: 'ai',         label: 'Artificial Intelligence', short: 'AI',        color: '#a855f7', kind: 'department' },
-  { id: 'digital',    label: 'Digital Transformation',  short: 'Digital',   color: '#06b6d4', kind: 'department' },
   { id: 'compsci',    label: 'Computer Science',        short: 'Comp Sci',  color: '#f59e0b', kind: 'department' },
   { id: 'marketing',  label: 'Marketing',                                   color: '#ec4899', kind: 'team' },
   { id: 'platforms',  label: 'Technical Platforms',     short: 'Platforms', color: '#f97316', kind: 'team' },
@@ -159,27 +158,6 @@ const COMMITTEE: Person[] = [
   },
 
   {
-    id: 'tanzila-mudassar', name: 'Tanzila Mudassar',
-    linkedin: 'https://www.linkedin.com/in/tanzila-mudassar/',
-    roles: [{ group: 'digital', title: 'Head of Digital Transformation', lead: true }],
-  },
-  {
-    id: 'muhammad-hamza-rafeh', name: 'Muhammad Hamza Rafeh',
-    linkedin: 'https://www.linkedin.com/in/muhammad-hamza-rafeh-7b377132b/',
-    roles: [{ group: 'digital', title: 'Event Coordinator' }],
-  },
-  {
-    id: 'tamara-browne', name: 'Tamara Browne',
-    linkedin: 'https://www.linkedin.com/in/tamara-b-49b45a437/',
-    roles: [{ group: 'digital', title: 'Coordinator' }],
-  },
-  {
-    id: 'hodane-gouled', name: 'Hodane Gouled',
-    linkedin: 'https://www.linkedin.com/in/hodane-gouled-b32534230/',
-    roles: [{ group: 'digital', title: 'Coordinator' }],
-  },
-
-  {
     id: 'alaa-aljasem', name: 'Alaa Aljasem',
     linkedin: 'https://www.linkedin.com/in/alaa-aljasem-b816b83aa/',
     roles: [{ group: 'compsci', title: 'Head of Computer Science', lead: true }],
@@ -193,6 +171,11 @@ const COMMITTEE: Person[] = [
     id: 'jasleen-kaur', name: 'Jasleen Kaur',
     linkedin: 'https://www.linkedin.com/in/jasleen-kaur-269367387/',
     roles: [{ group: 'compsci', title: 'Events Coordinator' }],
+  },
+  {
+    id: 'muhammad-hamza-rafeh', name: 'Muhammad Hamza Rafeh',
+    linkedin: 'https://www.linkedin.com/in/muhammad-hamza-rafeh-7b377132b/',
+    roles: [{ group: 'compsci', title: 'Event Coordinator' }],
   },
 
   {

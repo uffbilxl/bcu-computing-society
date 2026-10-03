@@ -65,16 +65,6 @@ const LEADS: Person[] = [
     ],
   },
   {
-    id: 'tayyeb-nadeem-somro',
-    name: 'Tayyeb Nadeem Somro',
-    linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
-    website: 'http://tayyebns.com',
-    roles: [
-      { group: 'leadership', title: 'Chairman and Founder', lead: true },
-      { group: 'platforms',  title: 'Web & App Dev' },
-    ],
-  },
-  {
     id: 'haarisah-hussain',
     name: 'Haarisah Hussain',
     linkedin: 'https://www.linkedin.com/in/haarisah-hussain-2ba850315',
@@ -97,6 +87,16 @@ const LEADS: Person[] = [
 
 /* ── Everyone else, in structural order ────────────────────── */
 const COMMITTEE: Person[] = [
+  {
+    id: 'tayyeb-nadeem-somro',
+    name: 'Tayyeb Nadeem Somro',
+    linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
+    website: 'http://tayyebns.com',
+    roles: [
+      { group: 'leadership', title: 'Chairman and Founder', lead: true },
+      { group: 'platforms',  title: 'Web & App Dev' },
+    ],
+  },
   {
     id: 'maryam-ahmad', name: 'Maryam Ahmad',
     linkedin: 'https://www.linkedin.com/in/maryam-a-259297235',
@@ -424,9 +424,9 @@ const DepartmentSection = forwardRef<HTMLElement, {
       />
 
       {/* The President takes the full width as the spotlight; the rest of
-          the featured leadership sits in a row beneath. */}
+          the featured leadership sits in a row beneath, two or three across. */}
       {featured.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 mb-4">
+        <div className={`grid grid-cols-1 gap-4 mt-3 mb-4 ${featured.length > 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
           {featured.map(({ person }, i) => (
             <LeaderCard
               key={person.id}
@@ -434,6 +434,7 @@ const DepartmentSection = forwardRef<HTMLElement, {
               index={i}
               reduced={reduced}
               spotlight={i === 0}
+              compact={featured.length > 3}
             />
           ))}
         </div>
@@ -463,12 +464,14 @@ const DepartmentSection = forwardRef<HTMLElement, {
    still answer the active filter.
    ──────────────────────────────────────────────────────────── */
 function LeaderCard({
-  person, index, reduced, spotlight = false,
+  person, index, reduced, spotlight = false, compact = false,
 }: {
   person: Person
   index: number
   reduced: boolean
   spotlight?: boolean
+  /** Three-across row: too narrow for the avatar to sit beside the text. */
+  compact?: boolean
 }) {
   const [title, ...rest] = person.roles
   /* A seat carrying the same title as the badge (Head of Research sits in both
@@ -485,7 +488,7 @@ function LeaderCard({
         delay: reduced ? 0 : 0.07 + index * 0.08,
       }}
       className={`relative overflow-hidden rounded-2xl border flex flex-col justify-center ${
-        spotlight ? 'md:col-span-3 p-6 sm:p-8' : 'p-5 sm:p-6'
+        spotlight ? 'md:col-span-full p-6 sm:p-8' : 'p-5 sm:p-6'
       }`}
       style={{
         background: 'var(--card-gradient)',
@@ -510,9 +513,9 @@ function LeaderCard({
         }}
       />
 
-      {/* In the three-across row there's no room beside the avatar for a long
+      {/* In a three-across row there's no room beside the avatar for a long
           title badge, so those cards stack it above the text from md up. */}
-      <div className={`relative flex items-start ${spotlight ? 'gap-5' : 'gap-4 md:flex-col md:gap-3'}`}>
+      <div className={`relative flex items-start ${spotlight ? 'gap-5' : compact ? 'gap-4 md:flex-col md:gap-3' : 'gap-4'}`}>
         <div
           className={`flex items-center justify-center rounded-2xl font-bold flex-shrink-0 ${
             spotlight ? 'text-[20px]' : 'text-[16px]'

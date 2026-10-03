@@ -223,7 +223,7 @@ export function CVBuilderClient() {
     })
 
   const reset = () => {
-    if (confirm('Reset the CV back to the SCA template? Your edits will be lost.')) {
+    if (confirm('Reset the CV back to the BCUComputingSoc template? Your edits will be lost.')) {
       setData(DEFAULT_CV)
     }
   }
@@ -413,7 +413,7 @@ export function CVBuilderClient() {
       {/* Header + toolbar */}
       <div className="mb-8 print:hidden">
         <h1 className="text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-tight text-[var(--color-text)]">
-          SCA CV Builder
+          BCUComputingSoc CV Builder
         </h1>
         <p className="text-sm text-[var(--color-muted)] mt-2 max-w-xl leading-relaxed">
           Build your CV. Land your opportunity. Completely free. Made by students, for students.

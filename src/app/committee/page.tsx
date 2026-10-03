@@ -53,16 +53,6 @@ const GROUP_BY_ID = Object.fromEntries(GROUPS.map(g => [g.id, g])) as Record<Gro
 /* ── Featured leadership ──────────────────────────────────── */
 const LEADS: Person[] = [
   {
-    id: 'tayyeb-nadeem-somro',
-    name: 'Tayyeb Nadeem Somro',
-    linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
-    website: 'http://tayyebns.com',
-    roles: [
-      { group: 'leadership', title: 'Chairman and Founder', lead: true },
-      { group: 'platforms',  title: 'Web & App Dev' },
-    ],
-  },
-  {
     id: 'bilal-arshad',
     name: 'Bilal Arshad',
     linkedin: 'https://www.linkedin.com/in/bilal-arshad-4a07812b4/',
@@ -72,6 +62,16 @@ const LEADS: Person[] = [
       { group: 'leadership', title: 'President', lead: true },
       { group: 'platforms',  title: 'Web & App Dev' },
       { group: 'research',   title: 'Researcher' },
+    ],
+  },
+  {
+    id: 'tayyeb-nadeem-somro',
+    name: 'Tayyeb Nadeem Somro',
+    linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
+    website: 'http://tayyebns.com',
+    roles: [
+      { group: 'leadership', title: 'Chairman and Founder', lead: true },
+      { group: 'platforms',  title: 'Web & App Dev' },
     ],
   },
   {
@@ -423,10 +423,18 @@ const DepartmentSection = forwardRef<HTMLElement, {
         style={{ background: `linear-gradient(90deg, ${group.color}59 0%, rgba(var(--hairline-rgb),0.07) 45%, transparent 100%)` }}
       />
 
+      {/* The President takes the full width as the spotlight; the rest of
+          the featured leadership sits in a row beneath. */}
       {featured.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3 mb-4">
           {featured.map(({ person }, i) => (
-            <LeaderCard key={person.id} person={person} index={i} reduced={reduced} />
+            <LeaderCard
+              key={person.id}
+              person={person}
+              index={i}
+              reduced={reduced}
+              spotlight={i === 0}
+            />
           ))}
         </div>
       )}
@@ -450,15 +458,17 @@ const DepartmentSection = forwardRef<HTMLElement, {
 
 
 /* ── Masthead card ─────────────────────────────────────────────
-   Sits above the filter bar as the org's two senior posts, not as a
-   search result. Its role chips still answer the active filter.
+   The featured leadership at the top of the Leadership section. The first
+   lead (the President) is drawn larger across the full width. Role chips
+   still answer the active filter.
    ──────────────────────────────────────────────────────────── */
 function LeaderCard({
-  person, index, reduced,
+  person, index, reduced, spotlight = false,
 }: {
   person: Person
   index: number
   reduced: boolean
+  spotlight?: boolean
 }) {
   const [title, ...rest] = person.roles
   /* A seat carrying the same title as the badge (Head of Research sits in both
@@ -474,11 +484,13 @@ function LeaderCard({
         ease: [0.16, 1, 0.3, 1],
         delay: reduced ? 0 : 0.07 + index * 0.08,
       }}
-      className="relative overflow-hidden rounded-2xl border p-5 sm:p-6 flex flex-col justify-center"
+      className={`relative overflow-hidden rounded-2xl border flex flex-col justify-center ${
+        spotlight ? 'md:col-span-3 p-6 sm:p-8' : 'p-5 sm:p-6'
+      }`}
       style={{
         background: 'var(--card-gradient)',
-        borderColor: 'rgba(99,102,241,0.28)',
-        boxShadow: '0 0 44px rgba(99,102,241,0.09)',
+        borderColor: spotlight ? 'rgba(99,102,241,0.42)' : 'rgba(99,102,241,0.28)',
+        boxShadow: spotlight ? '0 0 64px rgba(99,102,241,0.16)' : '0 0 44px rgba(99,102,241,0.09)',
       }}
     >
       {/* Indigo bloom, drawn once on entry */}
@@ -486,7 +498,7 @@ function LeaderCard({
         aria-hidden="true"
         className="absolute pointer-events-none"
         style={{
-          top: -150, right: -110, width: 320, height: 320,
+          top: -150, right: -110, width: spotlight ? 420 : 320, height: spotlight ? 420 : 320,
           background: 'radial-gradient(circle, rgba(99,102,241,0.22) 0%, transparent 68%)',
         }}
         initial={reduced ? { opacity: 0.6 } : { opacity: 0, scale: 0.7 }}
@@ -498,11 +510,15 @@ function LeaderCard({
         }}
       />
 
-      <div className="relative flex items-start gap-4">
+      {/* In the three-across row there's no room beside the avatar for a long
+          title badge, so those cards stack it above the text from md up. */}
+      <div className={`relative flex items-start ${spotlight ? 'gap-5' : 'gap-4 md:flex-col md:gap-3'}`}>
         <div
-          className="flex items-center justify-center rounded-2xl text-[16px] font-bold flex-shrink-0"
+          className={`flex items-center justify-center rounded-2xl font-bold flex-shrink-0 ${
+            spotlight ? 'text-[20px]' : 'text-[16px]'
+          }`}
           style={{
-            width: 56, height: 56,
+            width: spotlight ? 72 : 56, height: spotlight ? 72 : 56,
             color: 'var(--color-text)',
             background: 'rgba(99,102,241,0.18)',
             border: '1px solid rgba(99,102,241,0.5)',
@@ -514,7 +530,7 @@ function LeaderCard({
 
         <div className="flex-1 min-w-0">
           <span
-            className="inline-block mb-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.14em]"
+            className="inline-block mb-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.14em] whitespace-nowrap"
             style={{
               background: 'rgba(99,102,241,0.14)',
               color: 'var(--color-text)',
@@ -525,7 +541,7 @@ function LeaderCard({
           </span>
           <p
             className="font-bold text-[var(--color-text)] leading-tight"
-            style={{ fontSize: '1.25rem', letterSpacing: '-0.02em', textWrap: 'balance' }}
+            style={{ fontSize: spotlight ? '1.75rem' : '1.25rem', letterSpacing: '-0.02em', textWrap: 'balance' }}
           >
             {person.name}
           </p>

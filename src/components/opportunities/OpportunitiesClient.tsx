@@ -119,7 +119,7 @@ export function OpportunitiesClient({ opportunities }: Props) {
   const placements = opportunities.filter(o => o.type === 'PLACEMENT').length
 
   const tickerItems = [
-    { text: `We aim to provide as many opportunities as possible, but we will not promote defence companies - BCUSCA`, highlight: true },
+    { text: `We aim to provide as many opportunities as possible, but we will not promote defence companies - BCUComputingSoc`, highlight: true },
     { text: `${totalOpen} opportunities currently open` },
     { text: `Roles from ${companies} companies across the UK` },
     { text: `${internships} internships · ${placements} placements · ${graduates} graduate roles` },

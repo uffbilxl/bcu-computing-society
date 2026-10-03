@@ -51,18 +51,19 @@ const GROUPS: Group[] = [
 
 const GROUP_BY_ID = Object.fromEntries(GROUPS.map(g => [g.id, g])) as Record<GroupId, Group>
 
+const FOUNDER: Person = {
+  id: 'tayyeb-nadeem-somro',
+  name: 'Tayyeb Nadeem Somro',
+  linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
+  website: 'http://tayyebns.com',
+  roles: [
+    { group: 'leadership', title: 'Chairman and Founder', lead: true },
+    { group: 'platforms',  title: 'Web & App Dev' },
+  ],
+}
+
 /* ── Featured leadership ──────────────────────────────────── */
 const LEADS: Person[] = [
-  {
-    id: 'tayyeb-nadeem-somro',
-    name: 'Tayyeb Nadeem Somro',
-    linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
-    website: 'http://tayyebns.com',
-    roles: [
-      { group: 'leadership', title: 'Chairman and Founder', lead: true },
-      { group: 'platforms',  title: 'Web & App Dev' },
-    ],
-  },
   {
     id: 'bilal-arshad',
     name: 'Bilal Arshad',
@@ -769,6 +770,12 @@ export default function CommitteePage() {
 
       {/* ── Footer ─────────────────────────────────────────── */}
       <div className="mt-12 pt-6" style={{ borderTop: '1px solid rgba(var(--hairline-rgb),0.07)' }}>
+        <div className="mb-5 flex flex-col items-center gap-2 text-center text-[12px] leading-relaxed text-[var(--color-muted)]">
+          <p>
+            {FOUNDER.name} · {FOUNDER.roles.map(role => role.title).join(' · ')}
+          </p>
+          <SocialLinks person={FOUNDER} />
+        </div>
         <p className="text-[12px] text-[var(--color-muted)] text-center">
           Interested in joining the committee?{' '}
           <Link

@@ -162,7 +162,7 @@ const COMMITTEE: Person[] = [
   },
 
   {
-    id: 'alaa-aljasem', name: 'Alaa Aljasem',
+    id: 'alaa-aljasem', name: "A'laa Aljasem",
     linkedin: 'https://www.linkedin.com/in/alaa-aljasem-b816b83aa/',
     roles: [{ group: 'compsci', title: 'Head of Computer Science', lead: true }],
   },

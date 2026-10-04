@@ -88,7 +88,7 @@ export function CommitteeModal({ onClose }: Props) {
             students to join the committee and help shape the society.
           </p>
           <p style={{ fontSize: '0.8125rem', color: 'var(--t3)', lineHeight: 1.65, marginBottom: '1.5rem' }}>
-            Whether you're interested in organising events, managing social media, building tech
+            Whether you're interested in organising events, building tech
             projects, or leading sponsorship. There's a role for you.
           </p>
 

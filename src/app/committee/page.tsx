@@ -7,7 +7,7 @@ import { Globe, Mail, ArrowUpRight } from 'lucide-react'
 /* ── Types ─────────────────────────────────────────────────── */
 type GroupId =
   | 'leadership' | 'software' | 'cyber' | 'ai'
-  | 'compsci' | 'marketing' | 'platforms' | 'research'
+  | 'compsci' | 'platforms' | 'research'
 
 interface Group {
   id: GroupId
@@ -43,7 +43,6 @@ const GROUPS: Group[] = [
   { id: 'cyber',      label: 'Cyber Security',          short: 'Cyber',     color: '#ef4444', kind: 'department' },
   { id: 'ai',         label: 'Artificial Intelligence', short: 'AI',        color: '#a855f7', kind: 'department' },
   { id: 'compsci',    label: 'Computer Science',        short: 'Comp Sci',  color: '#f59e0b', kind: 'department' },
-  { id: 'marketing',  label: 'Marketing',                                   color: '#ec4899', kind: 'team' },
   { id: 'platforms',  label: 'Technical Platforms',     short: 'Platforms', color: '#f97316', kind: 'team' },
   { id: 'research',   label: 'Research & Development',  short: 'R&D',       color: '#8b5cf6', kind: 'team' },
 ]
@@ -181,18 +180,6 @@ const COMMITTEE: Person[] = [
     linkedin: 'https://www.linkedin.com/in/muhammad-hamza-rafeh-7b377132b/',
     roles: [{ group: 'compsci', title: 'Event Coordinator' }],
   },
-
-  {
-    id: 'tadiwa-gasura', name: 'Tadiwa Gasura',
-    linkedin: 'https://www.linkedin.com/in/tadiwavvs/',
-    roles: [{ group: 'marketing', title: 'Social Media' }],
-  },
-  {
-    id: 'abrar-alam', name: 'Abrar Alam',
-    linkedin: 'https://www.linkedin.com/in/abrartalam/',
-    roles: [{ group: 'marketing', title: 'Content Creator / Photographer' }],
-  },
-
 
   {
     id: 'george-james', name: 'George James',

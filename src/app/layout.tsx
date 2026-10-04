@@ -16,20 +16,20 @@ export const metadata: Metadata = {
   description: 'From your first lecture to your first offer.',
   keywords: ['internship', 'placement', 'graduate', 'BCU', 'computing', 'tech', 'BCUComputingSoc'],
   icons: {
-    icon: '/sca-logo.png',
-    apple: '/sca-logo.png',
+    icon: '/logo-navy.png',
+    apple: '/logo-navy.png',
   },
   openGraph: {
     title: 'BCUComputingSoc - Birmingham City University Computing Society: From your first lecture to your first offer.',
     description: 'From your first lecture to your first offer.',
     type: 'website',
-    images: [{ url: '/sca-logo.png', width: 1080, height: 1080, alt: 'BCUComputingSoc - Birmingham City University Computing Society' }],
+    images: [{ url: '/logo-navy.png', width: 1600, height: 1600, alt: 'BCUComputingSoc - Birmingham City University Computing Society' }],
   },
   twitter: {
     card: 'summary',
     title: 'BCUSCA - Student Computing Association: From your first lecture to your first offer.',
     description: 'From your first lecture to your first offer.',
-    images: ['/sca-logo.png'],
+    images: ['/logo-navy.png'],
   },
 }
 

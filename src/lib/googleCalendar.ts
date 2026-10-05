@@ -277,7 +277,7 @@ function expandRule(start: { at: Date; wall: string | null }, rrule: string, win
 
 async function fetchIcsEvents(calendarId: string, timeMin: Date, timeMax: Date): Promise<GoogleEvent[] | null> {
   const res = await fetch(`${ICAL}/${encodeURIComponent(calendarId)}/public/basic.ics`, {
-    next: { revalidate: 3600 },
+    next: { revalidate: 900 },
   })
   if (!res.ok) {
     console.error(`Google Calendar feed failed: ${res.status}`)
@@ -351,7 +351,7 @@ async function fetchApiEvents(calendarId: string, apiKey: string, timeMin: Date,
     // Expands weekly series (LeetCode Club) into one entry per occurrence.
     `&singleEvents=true&orderBy=startTime&maxResults=250`
 
-  const res = await fetch(url, { next: { revalidate: 3600 } })
+  const res = await fetch(url, { next: { revalidate: 900 } })
   if (!res.ok) {
     console.error(`Google Calendar API failed: ${res.status} ${await res.text()}`)
     return null

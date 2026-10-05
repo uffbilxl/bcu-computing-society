@@ -1,5 +1,3 @@
-'use client'
-
 const companies = [
   'Google', 'Amazon', 'Apple', 'Cloudflare', 'Microsoft',
   'Quantinuum', 'Arm', 'DRW', 'IBM', 'Accenture',
@@ -22,33 +20,28 @@ const items: { text: string; isCompany: boolean }[] = companies.flatMap((c, i) =
   { text: phrases[i % phrases.length], isCompany: false },
 ])
 
+/* Decorative strip of employers students have reached through the society.
+ * aria-hidden: it repeats, scrolls, and carries nothing a reader needs. */
 export function TickerBanner() {
   const doubled = [...items, ...items]
 
   return (
     <div
-      className="overflow-hidden py-3 select-none border-b border-[var(--color-border)]"
-      style={{ background: 'var(--color-surface)' }}
+      className="overflow-hidden py-4 select-none border-b border-[var(--color-border-subtle)] ticker-mask"
+      style={{ background: 'var(--color-bg)' }}
       aria-hidden="true"
     >
-      <div className="ticker-track flex whitespace-nowrap w-max">
+      <div className="ticker-track flex whitespace-nowrap w-max items-center">
         {doubled.map((item, i) => (
-          <span key={i} className="flex items-center">
-            <span
-              className={`text-[12px] px-5 ${
-                item.isCompany
-                  ? 'text-[var(--color-text)] font-semibold'
-                  : 'text-[var(--color-muted)] font-normal'
-              }`}
-              style={
-                item.isCompany
-                  ? { fontFamily: 'var(--font-geist-mono)', letterSpacing: '0.02em' }
-                  : undefined
-              }
-            >
-              {item.text}
-            </span>
-            <span className="text-[var(--color-border)] select-none">·</span>
+          <span
+            key={i}
+            className={`px-6 text-[14px] ${
+              item.isCompany
+                ? 'font-semibold text-[var(--color-text)] tracking-[-0.01em]'
+                : 'text-[var(--color-muted-2)]'
+            }`}
+          >
+            {item.text}
           </span>
         ))}
       </div>

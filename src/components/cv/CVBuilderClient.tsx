@@ -106,7 +106,7 @@ function BulletEditor({
         <button
           onClick={onRemove}
           aria-label="Remove bullet point"
-          className="mt-2 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--color-muted-2)] hover:text-red-400 transition-colors focus-ring flex-shrink-0"
+          className="mt-2 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--color-muted-2)] hover:text-[var(--color-danger)] transition-colors focus-ring flex-shrink-0"
         >
           <Trash2 size={13} />
         </button>
@@ -319,7 +319,7 @@ export function CVBuilderClient() {
                 </button>
                 <button
                   onClick={() => removeEntry(section, e.id)}
-                  className="ml-auto inline-flex items-center gap-1.5 text-[12px] text-[var(--color-muted-2)] hover:text-red-400 transition-colors focus-ring rounded-md"
+                  className="ml-auto inline-flex items-center gap-1.5 text-[12px] text-[var(--color-muted-2)] hover:text-[var(--color-danger)] transition-colors focus-ring rounded-md"
                 >
                   <Trash2 size={12} /> Remove entry
                 </button>
@@ -388,7 +388,7 @@ export function CVBuilderClient() {
               <button
                 onClick={() => setData(d => ({ ...d, skills: d.skills.filter(x => x.id !== s.id) }))}
                 aria-label="Remove row"
-                className="mt-2 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--color-muted-2)] hover:text-red-400 transition-colors focus-ring flex-shrink-0"
+                className="mt-2 w-7 h-7 flex items-center justify-center rounded-lg text-[var(--color-muted-2)] hover:text-[var(--color-danger)] transition-colors focus-ring flex-shrink-0"
               >
                 <Trash2 size={13} />
               </button>
@@ -435,7 +435,7 @@ export function CVBuilderClient() {
             className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[12px] border ${
               fits
                 ? 'text-emerald-400 border-emerald-400/25'
-                : 'text-red-400 border-red-400/25'
+                : 'text-[var(--color-danger)] border-[var(--color-danger)]'
             }`}
           >
             {fits ? <Check size={12} /> : <X size={12} />}
@@ -445,7 +445,7 @@ export function CVBuilderClient() {
           {report.hasDifferentiator && (
             <span
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-[12px] border text-[var(--color-accent)]"
-              style={{ borderColor: 'rgba(99,102,241,0.3)' }}
+              style={{ borderColor: 'rgba(59,130,246,0.3)' }}
               title="A section like Research, Projects, Certifications, or Leadership makes your CV stand out"
             >
               <Sparkles size={12} /> Differentiator section detected
@@ -477,7 +477,7 @@ export function CVBuilderClient() {
                 <div key={c.label} className="flex items-start gap-2.5">
                   <span
                     className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      c.ok ? 'bg-emerald-400/15 text-emerald-400' : 'bg-red-400/15 text-red-400'
+                      c.ok ? 'bg-[var(--color-ok-dim)] text-[var(--color-ok)]' : 'bg-[var(--color-danger-dim)] text-[var(--color-danger)]'
                     }`}
                   >
                     {c.ok ? <Check size={10} /> : <X size={10} />}
@@ -495,13 +495,13 @@ export function CVBuilderClient() {
               ))}
             </div>
             {report.repeatedStarts.length > 0 && (
-              <p className="text-[11px] text-amber-400 mt-4">
+              <p className="text-[11px] text-[var(--color-warn)] mt-4">
                 {report.repeatedStarts.length > 1 ? 'Several bullets start' : 'Three or more bullets start'} with
                 “{report.repeatedStarts.join('”, “')}”. Vary your opening verbs.
               </p>
             )}
             {report.lengthWarnings.length > 0 && (
-              <p className="text-[11px] text-amber-400 mt-2">
+              <p className="text-[11px] text-[var(--color-warn)] mt-2">
                 {report.lengthWarnings.length} bullet{report.lengthWarnings.length > 1 ? 's are' : ' is'} too short or too long — check the highlighted ones on your CV.
               </p>
             )}

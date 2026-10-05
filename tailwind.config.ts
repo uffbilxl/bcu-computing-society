@@ -10,33 +10,41 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'Courier New', 'monospace'],
       },
+      /* Mirrors the CSS custom properties in globals.css so utilities
+         follow the active theme. */
       colors: {
         bg: {
-          base: '#08090a',
-          2: '#111214',
-          3: '#161a20',
-          4: '#1a1d23',
-          5: '#1e222a',
+          base: 'var(--color-bg)',
+          2: 'var(--color-surface)',
+          3: 'var(--color-surface-2)',
+          4: 'var(--bg4)',
+          5: 'var(--color-surface-hover)',
         },
         border: {
-          1: '#1e2024',
-          2: '#252830',
-          3: '#363b46',
+          1: 'var(--color-border-subtle)',
+          2: 'var(--color-border)',
+          3: 'var(--b3)',
         },
         text: {
-          1: '#f1f2f4',
-          2: '#a8b0c0',
-          3: '#6b7280',
-          4: '#4b5263',
+          1: 'var(--color-text)',
+          2: 'var(--t2)',
+          3: 'var(--color-muted)',
+          4: 'var(--color-muted-2)',
         },
         accent: {
-          DEFAULT: '#6366f1',
-          hover: '#4f52d4',
-          bg: 'rgba(99,102,241,0.1)',
-          border: 'rgba(99,102,241,0.25)',
+          DEFAULT: 'var(--color-accent)',
+          hover: 'var(--color-accent-hover)',
+          text: 'var(--color-accent-text)',
+          bg: 'var(--color-accent-dim)',
+          border: 'var(--color-accent-border)',
+        },
+        navy: {
+          DEFAULT: '#0F1A2C',
+          deep: '#0A1220',
+          raised: '#15233A',
         },
       },
       borderRadius: {
@@ -49,6 +57,7 @@ module.exports = {
       },
       transitionTimingFunction: {
         precision: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'out-quint': 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
       keyframes: {
         'fade-in': {

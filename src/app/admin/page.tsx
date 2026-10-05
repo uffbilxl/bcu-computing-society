@@ -76,7 +76,7 @@ export default async function AdminDashboard() {
                   <td className="px-4 py-3 text-[11px] text-[var(--t3)] truncate">{opp.company.name}</td>
                   <td className="px-4 py-3 text-[11px] text-[var(--t3)]">{opportunityTypeLabel(opp.type)}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono ${opp.status === 'OPEN' ? 'text-green-700' : opp.status === 'CLOSING_SOON' ? 'text-amber-700' : 'text-[var(--t4)]'}`}>
+                    <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono ${opp.status === 'OPEN' ? 'text-[var(--color-ok)]' : opp.status === 'CLOSING_SOON' ? 'text-[var(--color-warn)]' : 'text-[var(--t4)]'}`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${opp.status === 'OPEN' ? 'bg-green-600' : opp.status === 'CLOSING_SOON' ? 'bg-amber-600' : 'bg-[var(--t4)]'}`} />
                       {opp.status === 'OPEN' ? 'Open' : opp.status === 'CLOSING_SOON' ? 'Closing' : 'Closed'}
                     </span>

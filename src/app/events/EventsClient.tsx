@@ -15,7 +15,7 @@ import {
   subMonths,
 } from 'date-fns'
 import { CalendarDays, ChevronLeft, ChevronRight, Clock, List, MapPin, X } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { eventTypeLabel, spotsLeft } from '@/lib/utils'
 import { RegisterButton } from '@/components/events/RegisterButton'
 import { formatLondon, londonWallClock } from '@/lib/time'
@@ -40,41 +40,36 @@ function EventCard({
 
   return (
     <div
-      className={`rounded-2xl px-5 py-4 transition-colors duration-200 ${
-        isPast ? 'opacity-60' : 'hover:border-[rgba(99,102,241,0.3)]'
+      className={`card px-5 py-5 transition-colors duration-200 ${
+        isPast ? 'opacity-70' : 'hover:border-[var(--color-border)]'
       }`}
-      style={{
-        background: 'var(--card-gradient)',
-        border: '1px solid rgba(var(--hairline-rgb),0.07)',
-      }}
     >
       <div className="flex items-start gap-4">
         {/* Date block */}
         <div
-          className={`hidden sm:flex w-[58px] h-[66px] rounded-xl flex-col items-center justify-center flex-shrink-0 ${
+          className={`hidden sm:flex w-[60px] h-[68px] rounded-xl flex-col items-center justify-center flex-shrink-0 border ${
             isPast
-              ? 'bg-[var(--color-bg)] border border-[var(--color-border)]'
-              : 'bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/25'
+              ? 'bg-[var(--color-surface-2)] border-[var(--color-border-subtle)]'
+              : 'bg-[var(--color-accent-dim)] border-[var(--color-accent-border)]'
           }`}
         >
           <span
-            className={`text-[9px] font-bold uppercase tracking-widest leading-none ${
-              isPast ? 'text-[var(--color-muted)]' : 'text-[var(--color-accent)]/80'
+            className={`text-[11px] font-semibold uppercase tracking-wider leading-none ${
+              isPast ? 'text-[var(--color-muted)]' : 'text-[var(--color-accent-text)]'
             }`}
           >
             {formatLondon(event.date, 'MMM')}
           </span>
           <span
-            className={`text-[28px] font-bold leading-none my-0.5 ${
-              isPast ? 'text-[var(--color-muted)]' : 'text-[var(--color-accent)]'
+            className={`text-[26px] font-bold leading-none my-1 tabular-nums ${
+              isPast ? 'text-[var(--color-muted)]' : 'text-[var(--color-text)]'
             }`}
-            style={{ fontFamily: 'var(--font-geist-mono)' }}
           >
             {formatLondon(event.date, 'd')}
           </span>
           <span
-            className={`text-[9px] font-medium uppercase tracking-wide ${
-              isPast ? 'text-[var(--color-muted)]' : 'text-[var(--color-accent)]/60'
+            className={`text-[11px] font-medium ${
+              isPast ? 'text-[var(--color-muted)]' : 'text-[var(--color-muted)]'
             }`}
           >
             {formatLondon(event.date, 'EEE')}
@@ -83,32 +78,33 @@ function EventCard({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3
-            className="text-[16px] font-semibold text-[var(--color-text)] leading-snug mb-1.5"
-            style={{ fontFamily: 'var(--font-geist-sans)' }}
-          >
+          {/* Small screens lose the date block, so the date leads the meta */}
+          <p className="sm:hidden text-[13px] font-semibold text-[var(--color-accent-text)] mb-1">
+            {formatLondon(event.date, 'EEE d MMM')}
+          </p>
+          <h3 className="text-[17px] font-semibold text-[var(--color-text)] leading-snug mb-1.5">
             {event.title}
           </h3>
           {event.description && (
-            <p className="text-[12px] text-[var(--color-muted)] leading-relaxed mb-3">
+            <p className="text-[14px] text-[var(--color-muted)] leading-relaxed mb-3 max-w-[65ch]">
               {event.description}
             </p>
           )}
-          <div className="flex gap-3 flex-wrap items-center">
-            <span className="flex items-center gap-1 text-[11px] text-[var(--color-muted)]">
-              <MapPin size={10} aria-hidden="true" />
+          <div className="flex gap-x-4 gap-y-2 flex-wrap items-center">
+            <span className="flex items-center gap-1.5 text-[13px] text-[var(--color-muted)]">
+              <MapPin size={13} aria-hidden="true" />
               {event.location}
             </span>
-            <span className="flex items-center gap-1 text-[11px] text-[var(--color-muted)]">
-              <Clock size={10} aria-hidden="true" />
+            <span className="flex items-center gap-1.5 text-[13px] text-[var(--color-muted)]">
+              <Clock size={13} aria-hidden="true" />
               {formatLondon(event.date, 'h:mm a')}
               {event.endDate ? ` – ${formatLondon(event.endDate, 'h:mm a')}` : ''}
             </span>
-            <span className="badge-gray text-[10px]">{eventTypeLabel(event.type)}</span>
+            <span className="badge-gray">{eventTypeLabel(event.type)}</span>
             {event.poster && (
               <button
                 onClick={() => onPoster(event.poster!)}
-                className="text-[11px] text-[var(--color-accent)] hover:underline focus-ring rounded"
+                className="text-[13px] font-medium text-[var(--color-accent-text)] hover:underline underline-offset-2 focus-ring rounded"
               >
                 View poster
               </button>
@@ -119,13 +115,11 @@ function EventCard({
         {/* Right actions */}
         <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
           {isPast ? (
-            <span className="text-[11px] text-[var(--color-muted)]">
+            <span className="text-[13px] text-[var(--color-muted)]">
               {event.spots ? `${event.registrations} attended` : 'Completed'}
             </span>
           ) : !event.spots && !event.registrationUrl ? (
-            <span className="px-3 py-1.5 border border-[var(--color-border)] rounded-full text-[11px] text-[var(--color-muted)] font-medium">
-              Open to all
-            </span>
+            <span className="badge-green">Open to all</span>
           ) : (
             <>
               <RegisterButton
@@ -134,9 +128,8 @@ function EventCard({
                 registrationUrl={event.registrationUrl}
               />
               {sl && sl !== 'Full' && (
-                <span className="text-[10px] text-[var(--color-muted)]">{sl}</span>
+                <span className="text-[12px] text-[var(--color-muted)]">{sl}</span>
               )}
-              {full && <span className="text-[10px] text-red-400">Full</span>}
             </>
           )}
         </div>
@@ -163,11 +156,17 @@ function CalendarView({
   now: Date
   onPoster: (src: string) => void
 }) {
-  const reduceMotion = useReducedMotion()
   /* The grid's cells are UK calendar days, so its reference "today"
    * is the UK one. `now` stays a true instant for past/future tests. */
   const today = londonWallClock(now)
-  const [month, setMonth] = useState(() => startOfMonth(today))
+  const [month, setMonthState] = useState(() => startOfMonth(today))
+  /* Which way the grid slides: forwards in time enters from the right. */
+  const [dir, setDir] = useState(0)
+  const setMonth = (next: Date | ((m: Date) => Date)) => {
+    const value = typeof next === 'function' ? next(month) : next
+    setDir(Math.sign(+value - +month))
+    setMonthState(value)
+  }
   const [selected, setSelected] = useState<Date>(() => today)
   /* The "today" ring is the one thing that depends on the real clock
    * rather than the data, so it waits for mount instead of being
@@ -249,20 +248,19 @@ function CalendarView({
           <button
             onClick={() => setMonth(m => subMonths(m, 1))}
             aria-label="Previous month"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors duration-200 focus-ring"
+            className="w-9 h-9 rounded-lg border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors duration-150 focus-ring"
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={16} aria-hidden="true" />
           </button>
           <button
             onClick={() => setMonth(m => addMonths(m, 1))}
             aria-label="Next month"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors duration-200 focus-ring"
+            className="w-9 h-9 rounded-lg border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors duration-150 focus-ring"
           >
-            <ChevronRight size={16} />
+            <ChevronRight size={16} aria-hidden="true" />
           </button>
           <h2
-            className="ml-2 text-[17px] font-semibold text-[var(--color-text)]"
-            style={{ fontFamily: 'var(--font-geist-sans)' }}
+            className="ml-3 text-[20px] font-semibold tracking-[-0.01em] text-[var(--color-text)]"
             aria-live="polite"
           >
             {format(month, 'MMMM yyyy')}
@@ -270,7 +268,7 @@ function CalendarView({
         </div>
         <button
           onClick={goToday}
-          className="px-3 py-1.5 rounded-full border border-[var(--color-border)] text-[11px] font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-accent)]/40 transition-colors duration-200 focus-ring"
+          className="btn-sm btn-ghost focus-ring"
         >
           Today
         </button>
@@ -281,7 +279,7 @@ function CalendarView({
         {WEEKDAYS.map(d => (
           <div
             key={d}
-            className="text-center text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)] py-2"
+            className="text-center text-[12px] font-medium text-[var(--color-muted)] py-2"
           >
             <span className="hidden sm:inline">{d}</span>
             <span className="sm:hidden">{d[0]}</span>
@@ -290,17 +288,29 @@ function CalendarView({
       </div>
 
       {/* Day grid */}
+      {/* initial={false} on the presence: the first render is never
+          animated, so server and client agree; later month changes slide
+          in the direction of travel. */}
+      <div className="relative overflow-hidden rounded-2xl">
+      <AnimatePresence mode="popLayout" initial={false} custom={dir}>
       <motion.div
         key={format(month, 'yyyy-MM')}
-        initial={reduceMotion ? false : { opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+        custom={dir}
+        variants={{
+          enter: (d: number) => ({ opacity: 0, x: d * 40 }),
+          center: { opacity: 1, x: 0 },
+          exit: (d: number) => ({ opacity: 0, x: d * -40 }),
+        }}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
         ref={gridRef}
         onKeyDown={onKeyDown}
         role="grid"
         aria-label={`Events in ${format(month, 'MMMM yyyy')}`}
-        className="grid grid-cols-7 gap-px rounded-2xl overflow-hidden"
-        style={{ background: 'rgba(var(--hairline-rgb),0.07)' }}
+        className="grid grid-cols-7 gap-px rounded-2xl overflow-hidden border border-[var(--color-border-subtle)]"
+        style={{ background: 'var(--color-border-subtle)' }}
       >
         {days.map(day => {
           const dayEvents = eventsOn(day)
@@ -325,14 +335,16 @@ function CalendarView({
                 setSelected(day)
                 if (outside) setMonth(startOfMonth(day))
               }}
-              className={`relative min-h-[62px] sm:min-h-[92px] p-1.5 sm:p-2 text-left align-top transition-colors duration-200 focus-ring ${
+              className={`relative min-h-[62px] sm:min-h-[100px] p-1.5 sm:p-2 text-left align-top transition-colors duration-150 focus-ring ${
                 isSelected
-                  ? 'bg-[var(--color-accent)]/10'
-                  : 'bg-[var(--color-bg)] hover:bg-[var(--color-surface)]'
+                  ? 'bg-[var(--color-accent-dim)] shadow-[inset_0_0_0_2px_var(--color-accent)]'
+                  : outside
+                    ? 'bg-[var(--color-bg)] hover:bg-[var(--color-surface-hover)]'
+                    : 'bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)]'
               }`}
             >
               <span
-                className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-[12px] tabular-nums ${
+                className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-[13px] tabular-nums ${
                   isNow
                     ? 'bg-[var(--color-accent)] text-white font-bold'
                     : outside
@@ -353,23 +365,23 @@ function CalendarView({
                   <span
                     key={e.id}
                     title={`${e.title} · ${formatLondon(e.date, 'h:mm a')}`}
-                    className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] leading-tight ${
+                    className={`flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[12px] leading-tight ${
                       e.date < now
                         ? 'bg-[var(--color-surface-2)] text-[var(--color-muted)]'
-                        : 'bg-[var(--color-accent)]/15 text-[var(--color-text)] font-medium'
+                        : 'bg-[var(--color-accent-dim)] text-[var(--color-text)] font-medium'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`w-1 h-1 rounded-full flex-shrink-0 ${
-                        e.date < now ? 'bg-[var(--color-muted-2)]' : 'bg-[var(--color-accent)]'
+                      className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                        e.date < now ? 'bg-[var(--color-muted-2)]' : 'bg-[var(--brand-blue)]'
                       }`}
                     />
                     <span className="truncate">{e.title}</span>
                   </span>
                 ))}
                 {dayEvents.length > MAX_CHIPS && (
-                  <span className="block px-1.5 text-[10px] text-[var(--color-muted)]">
+                  <span className="block px-1.5 text-[12px] text-[var(--color-muted)]">
                     +{dayEvents.length - MAX_CHIPS} more
                   </span>
                 )}
@@ -381,7 +393,7 @@ function CalendarView({
                   <span
                     key={e.id}
                     className={`w-1.5 h-1.5 rounded-full ${
-                      e.date < now ? 'bg-[var(--color-muted-2)]' : 'bg-[var(--color-accent)]'
+                      e.date < now ? 'bg-[var(--color-muted-2)]' : 'bg-[var(--brand-blue)]'
                     }`}
                   />
                 ))}
@@ -390,21 +402,17 @@ function CalendarView({
           )
         })}
       </motion.div>
+      </AnimatePresence>
+      </div>
 
       {/* Selected day */}
       <div className="mt-6">
-        <h3 className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)] mb-3">
+        <h3 className="text-[15px] font-semibold text-[var(--color-text)] mb-3">
           {format(selected, 'EEEE d MMMM')}
         </h3>
         {selectedEvents.length === 0 ? (
-          <div
-            className="rounded-2xl px-5 py-8 text-center"
-            style={{
-              background: 'var(--card-gradient)',
-              border: '1px solid rgba(var(--hairline-rgb),0.07)',
-            }}
-          >
-            <p className="text-[13px] text-[var(--color-muted)]">
+          <div className="card px-5 py-8 text-center">
+            <p className="text-[14px] text-[var(--color-muted)]">
               Nothing scheduled. Pick another day, or browse everything in list view.
             </p>
           </div>
@@ -437,25 +445,21 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
   const list = tab === 'upcoming' ? upcoming : past
 
   return (
-    <div className="max-w-[860px] mx-auto px-5 sm:px-8 py-10 sm:py-14" style={{ position: 'relative', zIndex: 1 }}>
+    <div className="max-w-[960px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
 
-      {/* Page header */}
-      <div className="mb-10">
-        <span className="eyebrow mb-3">BCU Computing Society</span>
-        <h1
-          className="text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-tight text-[var(--color-text)] mb-2"
-          style={{ fontFamily: 'var(--font-geist-sans)' }}
-        >
-          Events
-        </h1>
-        <p className="text-sm text-[var(--color-muted)] max-w-lg">
+      <header className="mb-8">
+        <h1 className="page-title">Events</h1>
+        <p className="page-lede mt-3">
           Workshops, talks, networking and career events for BCU computing students.
+          {upcoming.length > 0 && (
+            <> Next up: <span className="text-[var(--color-text)] font-medium">{upcoming[0].title}</span>, {formatLondon(upcoming[0].date, 'EEEE d MMMM')}.</>
+          )}
         </p>
-      </div>
+      </header>
 
       {/* View switch + tabs */}
       <div className="flex flex-wrap items-center gap-3 mb-8">
-        <div className="flex gap-1 border border-[var(--color-border)] rounded-full p-1 w-fit bg-[var(--color-surface)]">
+        <div className="flex gap-1 border border-[var(--color-border)] rounded-xl p-1 w-fit bg-[var(--color-surface)]">
           {([
             ['calendar', 'Calendar', CalendarDays],
             ['list', 'List', List],
@@ -464,9 +468,9 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
               key={v}
               onClick={() => setView(v)}
               aria-pressed={view === v}
-              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-200 focus-ring ${
+              className={`flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[14px] font-medium transition-colors duration-150 focus-ring ${
                 view === v
-                  ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                  ? 'bg-[var(--color-surface-2)] text-[var(--color-text)] shadow-[var(--shadow-sm)]'
                   : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
               }`}
             >
@@ -477,15 +481,15 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
         </div>
 
         {view === 'list' && (
-          <div className="flex gap-1 border border-[var(--color-border)] rounded-full p-1 w-fit bg-[var(--color-surface)]">
+          <div className="flex gap-1 border border-[var(--color-border)] rounded-xl p-1 w-fit bg-[var(--color-surface)]">
             {(['upcoming', 'past'] as const).map(t => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 aria-pressed={tab === t}
-                className={`px-5 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-200 capitalize focus-ring ${
+                className={`h-8 px-3.5 rounded-lg text-[14px] font-medium transition-colors duration-150 capitalize focus-ring ${
                   tab === t
-                    ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                    ? 'bg-[var(--color-surface-2)] text-[var(--color-text)] shadow-[var(--shadow-sm)]'
                     : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'
                 }`}
               >
@@ -501,26 +505,23 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
       {view === 'calendar' ? (
         <CalendarView events={events} now={now} onPoster={setPosterSrc} />
       ) : list.length === 0 ? (
-        <div className="border border-[rgba(var(--hairline-rgb),0.07)] rounded-2xl py-20 px-6 text-center" style={{ background: 'var(--card-gradient)' }}>
-          <div className="w-14 h-14 rounded-2xl bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20 flex items-center justify-center mx-auto mb-5">
-            <Clock size={24} className="text-[var(--color-accent)]" aria-hidden="true" />
+        <div className="card py-16 px-6 text-center">
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-accent-dim)] flex items-center justify-center mx-auto mb-5">
+            <Clock size={22} className="text-[var(--color-accent-text)]" aria-hidden="true" />
           </div>
           {tab === 'upcoming' ? (
             <>
-              <div
-                className="text-[16px] font-semibold text-[var(--color-text)] mb-2"
-                style={{ fontFamily: 'var(--font-geist-sans)' }}
-              >
+              <div className="text-[16px] font-semibold text-[var(--color-text)] mb-2">
                 Events coming soon
               </div>
-              <div className="text-[13px] text-[var(--color-muted)] max-w-xs mx-auto leading-relaxed">
+              <div className="text-[14px] text-[var(--color-muted)] max-w-xs mx-auto leading-relaxed">
                 BCUComputingSoc is busy planning workshops, talks, and networking events.
                 <span className="block mt-2 text-[var(--color-text)] font-medium">
                   Stay tuned, announcements dropping soon.
                 </span>
               </div>
-              <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 border border-[var(--color-border)] rounded-full text-[11px] text-[var(--color-muted)] tracking-wide">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse inline-block" />
+              <div className="mt-6 inline-flex items-center gap-2 px-3 h-8 border border-[var(--color-border)] rounded-full text-[13px] text-[var(--color-muted)]">
+                <span className="live-dot" aria-hidden="true" />
                 To be announced by BCUComputingSoc
               </div>
             </>
@@ -529,7 +530,7 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
               <div className="text-[16px] font-semibold text-[var(--color-text)] mb-2">
                 No past events yet
               </div>
-              <div className="text-[13px] text-[var(--color-muted)] max-w-xs mx-auto">
+              <div className="text-[14px] text-[var(--color-muted)] max-w-xs mx-auto">
                 Previous events will appear here once they have taken place.
               </div>
             </>
@@ -540,8 +541,8 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
         <div className="relative">
           {/* Vertical indigo line */}
           <div
-            className="absolute left-[23px] top-0 bottom-0 w-px"
-            style={{ background: 'linear-gradient(to bottom, var(--color-accent), transparent)' }}
+            className="absolute left-[23px] top-3 bottom-3 w-px bg-[var(--color-border)]"
+            aria-hidden="true"
           />
 
           <div className="flex flex-col gap-6">
@@ -559,7 +560,7 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
                       className={`w-3 h-3 rounded-full border-2 mt-1.5 ${
                         isPast
                           ? 'border-[var(--color-border)] bg-[var(--color-bg)]'
-                          : 'border-[var(--color-accent)] bg-[var(--color-accent)]'
+                          : 'border-[var(--brand-blue)] bg-[var(--brand-blue)]'
                       }`}
                     />
                   </div>
@@ -577,8 +578,13 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
       {/* Poster modal */}
       {posterSrc && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4"
+          className="fixed inset-0 flex items-center justify-center bg-black/75 p-4"
+          style={{ zIndex: 'var(--z-modal)' as unknown as number }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Event poster"
           onClick={() => setPosterSrc(null)}
+          onKeyDown={e => { if (e.key === 'Escape') setPosterSrc(null) }}
         >
           <div
             className="relative max-w-sm w-full"
@@ -586,10 +592,11 @@ export function EventsClient({ events }: { events: SCAEvent[] }) {
           >
             <button
               onClick={() => setPosterSrc(null)}
-              className="absolute -top-3 -right-3 z-10 w-8 h-8 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors focus-ring"
+              autoFocus
+              className="absolute -top-3 -right-3 z-10 w-9 h-9 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors focus-ring"
               aria-label="Close poster"
             >
-              <X size={14} />
+              <X size={16} aria-hidden="true" />
             </button>
             <Image
               src={posterSrc}

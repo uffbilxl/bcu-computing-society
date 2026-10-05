@@ -2,10 +2,20 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { Search, X, ShieldOff, ArrowUpRight, Clock, MapPin, SearchX } from 'lucide-react'
 import { Opportunity, OpportunityType } from '@/types'
-import { formatDeadline, deadlineStatus, opportunityTypeLabel, opportunityTypeBadgeClass, workModeLabel, formatSalary } from '@/lib/utils'
+import {
+  formatDeadline,
+  deadlineHint,
+  deadlineStatus,
+  opportunityTypeLabel,
+  opportunityTypeBadgeClass,
+  workModeLabel,
+  formatSalary,
+} from '@/lib/utils'
 import { prominenceScore } from '@/lib/companyRanking'
 import { CompanyLogo } from '@/components/ui/CompanyLogo'
+import { useStillOpen } from '@/hooks/useStillOpen'
 
 const TYPES: { value: OpportunityType; label: string }[] = [
   { value: 'INTERNSHIP', label: 'Internship' },
@@ -15,11 +25,15 @@ const TYPES: { value: OpportunityType; label: string }[] = [
   { value: 'INSIGHT', label: 'Insight' },
 ]
 
+type Sort = 'newest' | 'deadline' | 'salary' | 'az'
+
 interface Props {
   opportunities: Opportunity[]
 }
 
-export function OpportunitiesClient({ opportunities }: Props) {
+export function OpportunitiesClient({ opportunities: served }: Props) {
+  // The page is cached; anything that closes while it's being served drops out here.
+  const opportunities = useStillOpen(served)
   // Read on the client (not passed as a server prop) so the page itself
   // stays cacheable — reading searchParams server-side forces Next.js to
   // skip caching for the whole route.
@@ -27,8 +41,7 @@ export function OpportunitiesClient({ opportunities }: Props) {
   const initialType = searchParams.get('type') as OpportunityType | null
   const [types, setTypes] = useState<OpportunityType[]>(initialType ? [initialType] : [])
   const [search, setSearch] = useState('')
-  const [sort, setSort] = useState<'newest' | 'deadline' | 'salary' | 'az'>('newest')
-  const [showFilters, setShowFilters] = useState(false)
+  const [sort, setSort] = useState<Sort>('newest')
 
   function toggleType(t: OpportunityType) {
     setTypes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t])
@@ -37,7 +50,7 @@ export function OpportunitiesClient({ opportunities }: Props) {
     setTypes([]); setSearch('')
   }
 
-  const activeFilterCount = types.length
+  const hasFilters = types.length > 0 || search.trim() !== ''
 
   const filtered = useMemo(() => {
     let list = [...opportunities]
@@ -66,157 +79,116 @@ export function OpportunitiesClient({ opportunities }: Props) {
     return list
   }, [opportunities, types, search, sort])
 
-  const filterPanel = (
-    <div className="flex flex-col h-full">
-      <div className="text-[10px] font-semibold text-[var(--t4)] uppercase tracking-widest pb-3 border-b border-[var(--b1)] mb-4">Filters</div>
-
-      {/* Search */}
-      <div className="mb-4">
-        <label className="label">Search</label>
-        <input
-          type="text"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Role, company, skill…"
-          className="input text-[12px]"
-        />
-      </div>
-
-      {/* Type */}
-      <div className="mb-4">
-        <label className="label">Type</label>
-        <div className="flex flex-col gap-0.5">
-          {TYPES.map(t => (
-            <label key={t.value} className="flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer hover:bg-[var(--bg3)] transition-colors">
-              <input
-                type="checkbox"
-                checked={types.includes(t.value)}
-                onChange={() => toggleType(t.value)}
-                className="accent-accent w-3 h-3"
-              />
-              <span className="text-[12px] text-[var(--t2)] flex-1">{t.label}</span>
-              <span className="text-[10px] text-[var(--t4)]">
-                {opportunities.filter(o => o.type === t.value).length}
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <button
-        onClick={clearAll}
-        className="w-full py-1.5 text-[11px] text-[var(--t3)] border border-[var(--b2)] rounded-md hover:border-[var(--b3)] hover:text-[var(--t2)] transition-colors"
-      >
-        Clear all filters
-      </button>
-    </div>
-  )
-
-  const totalOpen = opportunities.length
-  const companies = new Set(opportunities.map(o => o.company.name)).size
-  const internships = opportunities.filter(o => o.type === 'INTERNSHIP').length
-  const graduates = opportunities.filter(o => o.type === 'GRADUATE').length
-  const placements = opportunities.filter(o => o.type === 'PLACEMENT').length
-
-  const tickerItems = [
-    { text: `We aim to provide as many opportunities as possible, but we will not promote defence companies - BCUComputingSoc`, highlight: true },
-    { text: `${totalOpen} opportunities currently open` },
-    { text: `Roles from ${companies} companies across the UK` },
-    { text: `${internships} internships · ${placements} placements · ${graduates} graduate roles` },
-    { text: `This tracker is updated daily with new opportunities` },
-  ]
-  const sep = <span className="text-[var(--b3)] mx-6">◆</span>
+  const totalOpen   = opportunities.length
+  const companies   = new Set(opportunities.map(o => o.company.name)).size
+  const countOf     = (t: OpportunityType) => opportunities.filter(o => o.type === t).length
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Disclaimer ticker */}
-      <div className="w-full overflow-hidden border-b border-[var(--b1)] bg-[var(--bg2)] py-2">
-        <div className="ticker-track flex w-max">
-          {[...tickerItems, ...tickerItems].map((item, i) => (
-            <span key={i} className={`flex items-center whitespace-nowrap text-[11px] font-medium ${item.highlight ? 'text-amber-400' : 'text-[var(--t3)]'}`}>
-              {sep}{item.text}
-            </span>
-          ))}
-        </div>
-      </div>
+    <div className="max-w-[1200px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
+      {/* ── Header ─────────────────────────────────────────── */}
+      <header>
+        <h1 className="page-title enter">Opportunities</h1>
+        <p className="page-lede mt-3 enter" style={{ '--i': 1 } as React.CSSProperties}>
+          {totalOpen} open roles from {companies} companies across the UK: {countOf('INTERNSHIP')} internships,{' '}
+          {countOf('PLACEMENT')} placements and {countOf('GRADUATE')} graduate roles. This tracker is updated daily with new opportunities.
+        </p>
+        <p style={{ '--i': 2 } as React.CSSProperties} className="enter mt-4 inline-flex items-start gap-2 text-[13px] leading-relaxed text-[var(--color-muted)] rounded-lg px-3 py-2 border border-[var(--color-border-subtle)] bg-[var(--color-surface)]">
+          <ShieldOff size={15} className="mt-[2px] flex-shrink-0 text-[var(--color-muted-2)]" aria-hidden="true" />
+          We aim to provide as many opportunities as possible, but we will not promote defence companies.
+        </p>
+      </header>
 
-      {/* Mini stats strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-[var(--b1)] bg-[var(--bg2)]">
-        {[
-          { n: totalOpen, l: 'Opportunities' },
-          { n: internships, l: 'Internships' },
-          { n: graduates, l: 'Graduate Roles' },
-          { n: companies, l: 'Companies' },
-        ].map((s, i) => (
-          <div key={i} className={`py-4 text-center ${i < 3 ? 'border-r border-[var(--b1)]' : ''} ${i < 2 ? 'border-b sm:border-b-0 border-[var(--b1)]' : ''}`}>
-            <div className="text-[20px] font-black text-[var(--t1)] tabular-nums">{s.n}</div>
-            <div className="text-[9px] text-[var(--t4)] uppercase tracking-[0.12em] mt-0.5">{s.l}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-1">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:block w-[240px] flex-shrink-0 border-r border-[var(--b1)] bg-[var(--bg2)] p-5 sticky top-[52px] self-start max-h-[calc(100vh-52px)] overflow-y-auto">
-        {filterPanel}
-      </aside>
-
-      {/* Mobile filter drawer */}
-      {showFilters && (
-        <div className="fixed inset-0 z-50 md:hidden flex">
-          <div className="flex-1 bg-black/50" onClick={() => setShowFilters(false)} />
-          <div className="w-[290px] bg-[var(--bg2)] border-l border-[var(--b1)] flex flex-col overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[var(--b1)] flex-shrink-0">
-              <span className="text-[13px] font-semibold text-[var(--t1)]">Filters</span>
+      {/* ── Toolbar ────────────────────────────────────────── */}
+      <div
+        /* Pinned below the nav on tablet and up. On phones it stacks into
+           three rows, which would eat a quarter of the screen if it stuck. */
+        className="md:sticky md:top-16 -mx-5 sm:-mx-8 px-5 sm:px-8 py-3 mt-8 border-b border-[var(--color-border-subtle)]"
+        style={{ zIndex: 30, background: 'var(--navbar-glass-bg)', backdropFilter: 'saturate(160%) blur(14px)', WebkitBackdropFilter: 'saturate(160%) blur(14px)' }}
+      >
+        <div className="flex flex-col md:flex-row md:items-center gap-3">
+          <div className="relative md:w-[300px] flex-shrink-0">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-2)] pointer-events-none" aria-hidden="true" />
+            <input
+              type="search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search role, company, skill"
+              aria-label="Search opportunities"
+              className="input pl-9 pr-9"
+            />
+            {search && (
               <button
-                onClick={() => setShowFilters(false)}
-                className="text-[var(--t3)] hover:text-[var(--t1)] transition-colors text-[16px] leading-none"
+                onClick={() => setSearch('')}
+                aria-label="Clear search"
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]"
               >
-                ✕
+                <X size={14} aria-hidden="true" />
               </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-5">
-              {filterPanel}
-            </div>
-            <div className="p-4 border-t border-[var(--b1)] flex-shrink-0">
-              <button
-                onClick={() => setShowFilters(false)}
-                className="w-full py-2.5 bg-accent text-white text-[13px] font-medium rounded-lg hover:bg-[var(--acc2)] transition-colors"
-              >
-                Show {filtered.length} results
-              </button>
-            </div>
+            )}
           </div>
-        </div>
-      )}
 
-      {/* Results */}
-      <div className="flex-1 p-4 md:p-6 min-w-0">
-        <div className="flex items-center justify-between mb-4 gap-3">
-          <div className="flex items-center gap-2">
-            {/* Mobile filter toggle */}
-            <button
-              onClick={() => setShowFilters(true)}
-              className="md:hidden flex items-center gap-2 px-3 py-1.5 border border-[var(--b2)] rounded-md text-[12px] text-[var(--t2)] hover:border-[var(--b3)] transition-colors"
+          <div
+            role="group"
+            aria-label="Filter by type"
+            className="flex gap-2 overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0 md:flex-1 [scrollbar-width:none]"
+          >
+            {TYPES.map(t => {
+              const on = types.includes(t.value)
+              return (
+                <button
+                  key={t.value}
+                  onClick={() => toggleType(t.value)}
+                  aria-pressed={on}
+                  className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-[14px] whitespace-nowrap transition-colors duration-150 focus-ring ${
+                    on
+                      ? 'bg-[var(--color-accent)] border-[var(--color-accent)] text-white font-medium'
+                      : 'bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
+                  }`}
+                >
+                  {t.label}
+                  <span className={`tabular-nums text-[12px] ${on ? 'text-white/80' : 'text-[var(--color-muted-2)]'}`}>
+                    {countOf(t.value)}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="hidden md:flex items-center gap-2 md:ml-auto flex-shrink-0">
+            <label htmlFor="opp-sort" className="text-[13px] text-[var(--color-muted)] whitespace-nowrap">Sort by</label>
+            <select
+              id="opp-sort"
+              value={sort}
+              onChange={e => setSort(e.target.value as Sort)}
+              className="input w-auto pr-8"
             >
-              <svg width="13" height="11" viewBox="0 0 13 11" fill="none">
-                <path d="M1 1h11M3 5.5h7M5 10h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              Filters
-              {activeFilterCount > 0 && (
-                <span className="w-4 h-4 rounded-full bg-accent text-white text-[9px] flex items-center justify-center leading-none">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-            <span className="text-[12px] text-[var(--t3)]">
-              <strong className="text-[var(--t1)]">{filtered.length}</strong> opportunities
-            </span>
+              <option value="newest">Recommended</option>
+              <option value="deadline">Deadline soonest</option>
+              <option value="salary">Highest salary</option>
+              <option value="az">A–Z</option>
+            </select>
           </div>
+        </div>
+      </div>
+
+      {/* ── Results ────────────────────────────────────────── */}
+      <div className="flex items-center justify-between mt-6 mb-3 min-h-8">
+        <p className="text-[14px] text-[var(--color-muted)]" aria-live="polite">
+          Showing <strong className="text-[var(--color-text)] font-semibold">{filtered.length}</strong>{' '}
+          {filtered.length === 1 ? 'opportunity' : 'opportunities'}
+        </p>
+        <div className="flex items-center gap-2">
+          {hasFilters && (
+            <button onClick={clearAll} className="btn-sm btn-ghost focus-ring">
+              <X size={14} aria-hidden="true" />
+              Clear
+            </button>
+          )}
           <select
             value={sort}
-            onChange={e => setSort(e.target.value as any)}
-            className="bg-[var(--bg3)] border border-[var(--b2)] rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] text-[var(--t2)] outline-none flex-shrink-0"
+            onChange={e => setSort(e.target.value as Sort)}
+            aria-label="Sort by"
+            className="md:hidden input h-8 w-auto text-[13px] pr-7"
           >
             <option value="newest">Recommended</option>
             <option value="deadline">Deadline soonest</option>
@@ -224,29 +196,46 @@ export function OpportunitiesClient({ opportunities }: Props) {
             <option value="az">A–Z</option>
           </select>
         </div>
+      </div>
 
-        {filtered.length === 0 ? (
-          <div className="py-20 text-center text-[var(--t4)]">
-            <div className="text-[32px] mb-3">◎</div>
-            <div className="text-[14px] font-medium text-[var(--t2)] mb-1">No opportunities found</div>
-            <div className="text-[12px]">Try adjusting your filters</div>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-px border border-[var(--b1)] rounded-xl overflow-hidden">
-            {filtered.map(opp => (
-              <OpportunityRow key={opp.id} opp={opp} />
-            ))}
-          </div>
-        )}
-      </div>
-      </div>
+      {filtered.length === 0 ? (
+        <div className="card py-16 px-6 flex flex-col items-center text-center">
+          <span className="w-12 h-12 rounded-xl flex items-center justify-center bg-[var(--color-surface-2)] text-[var(--color-muted)]">
+            <SearchX size={22} aria-hidden="true" />
+          </span>
+          <p className="mt-4 text-[16px] font-semibold text-[var(--color-text)]">No opportunities match</p>
+          <p className="mt-1 text-[14px] text-[var(--color-muted)] max-w-[40ch]">
+            {opportunities.length === 0
+              ? 'Listings are refreshing. Check back in a few minutes.'
+              : 'Try a broader search or switch off a type filter.'}
+          </p>
+          {hasFilters && (
+            <button onClick={clearAll} className="btn-primary mt-5 focus-ring">Clear filters</button>
+          )}
+        </div>
+      ) : (
+        /* Keyed on the filters so the rows replay a short fade when the
+           result set changes: the list visibly responds to the input. */
+        <ul
+          key={`${types.join(',')}|${search.trim()}|${sort}`}
+          className="card overflow-hidden divide-y divide-[var(--color-border-subtle)]"
+        >
+          {filtered.map((opp, i) => (
+            <li key={opp.id} className={i < 24 ? 'fade-in' : undefined} style={{ '--i': i } as React.CSSProperties}>
+              <OpportunityRow opp={opp} />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
 
 function OpportunityRow({ opp }: { opp: Opportunity }) {
   const ds = deadlineStatus(opp.deadline)
+  const hint = deadlineHint(opp.deadline)
   const isNew = opp.createdAt > new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+  const hasSalary = Boolean(opp.salary || opp.salaryMin || opp.salaryMax)
 
   /* Straight to the employer's application, matching the homepage cards.
    * Falls back to our detail page only when a row has no application link. */
@@ -257,36 +246,60 @@ function OpportunityRow({ opp }: { opp: Opportunity }) {
     <Link
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="bg-[var(--bg2)] px-4 sm:px-5 py-4 flex items-center gap-3 sm:gap-4 border-b border-[var(--b1)] last:border-b-0 hover:bg-[var(--bg3)] transition-colors group"
+      className="group flex items-start sm:items-center gap-4 px-4 sm:px-5 py-4 transition-colors duration-150 hover:bg-[var(--color-surface-hover)] focus-ring"
     >
-      <CompanyLogo name={opp.company.name} logoUrl={opp.company.logo} size={40} />
+      <span className="flex-shrink-0 transition-transform duration-200 group-hover:scale-105">
+        <CompanyLogo name={opp.company.name} logoUrl={opp.company.logo} size={44} />
+      </span>
 
       <div className="flex-1 min-w-0">
-        <div className="text-[11px] text-[var(--t4)] mb-0.5 truncate">{opp.company.name} · {opp.location}</div>
-        <div className="text-[13px] font-medium text-[var(--t1)] mb-1.5 group-hover:text-white transition-colors truncate">{opp.title}</div>
-        <div className="flex gap-1.5 flex-wrap">
-          {isNew && <span className="badge-blue">New</span>}
+        <div className="flex items-start gap-2">
+          <p className="text-[15px] sm:text-[16px] font-semibold text-[var(--color-text)] leading-snug line-clamp-2 sm:truncate">
+            {opp.title}
+          </p>
+          {isNew && <span className="badge-blue flex-shrink-0 mt-0.5">New</span>}
+        </div>
+        <p className="mt-1 flex items-center gap-1.5 text-[13px] text-[var(--color-muted)] min-w-0">
+          <span className="font-medium text-[var(--t2)] truncate max-w-[45%]">{opp.company.name}</span>
+          <span aria-hidden="true">·</span>
+          <MapPin size={12} className="flex-shrink-0" aria-hidden="true" />
+          <span className="truncate">{opp.location}</span>
+          <span aria-hidden="true" className="hidden sm:inline">·</span>
+          <span className="hidden sm:inline flex-shrink-0">{workModeLabel(opp.workMode)}</span>
+        </p>
+        <div className="mt-2 flex gap-1.5 flex-wrap">
           <span className={opportunityTypeBadgeClass(opp.type)}>{opportunityTypeLabel(opp.type)}</span>
-          <span className="hidden sm:inline badge-white">{workModeLabel(opp.workMode)}</span>
           {opp.tags.slice(0, 2).map(({ tag }) => (
-            <span key={tag.id} className="tag">{tag.name}</span>
+            <span key={tag.id} className="tag hidden sm:inline-flex">{tag.name}</span>
           ))}
+          {/* Deadline sits with the badges on small screens */}
+          <span className="sm:hidden inline-flex items-center gap-1 text-[12px] text-[var(--color-muted)]">
+            <Clock size={12} aria-hidden="true" />
+            {opp.deadline ? formatDeadline(opp.deadline) : 'Rolling'}
+          </span>
         </div>
       </div>
 
-      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-        {(opp.salary || opp.salaryMin || opp.salaryMax) && (
-          <span className="text-[13px] font-medium text-accent hidden sm:block">
+      <div className="hidden sm:flex flex-col items-end gap-1 flex-shrink-0 text-right min-w-[150px]">
+        {hasSalary && (
+          <span className="text-[14px] font-semibold text-[var(--color-text)]">
             {formatSalary(opp.salaryMin, opp.salaryMax, opp.salary)}
           </span>
         )}
-        <span className="text-[11px] text-[var(--t4)] hidden sm:block">
-          {opp.deadline ? `Closes ${formatDeadline(opp.deadline)}` : 'Rolling'}
+        <span className="text-[13px] text-[var(--color-muted)]">
+          {opp.deadline ? `Closes ${formatDeadline(opp.deadline)}` : 'Rolling deadline'}
         </span>
-        {ds === 'open' && <span className="badge-green">Open</span>}
-        {ds === 'closing' && <span className="badge-amber">Closing</span>}
-        {ds === 'closed' && <span className="badge-red">Closed</span>}
+        {hint && ds === 'closing' && (
+          <span className="badge-amber">{hint}</span>
+        )}
       </div>
+
+      <ArrowUpRight
+        size={16}
+        className="hidden sm:block flex-shrink-0 text-[var(--color-muted-2)] group-hover:text-[var(--color-accent-text)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200"
+        aria-hidden="true"
+      />
+      {external && <span className="sr-only">(opens the employer&apos;s site in a new tab)</span>}
     </Link>
   )
 }

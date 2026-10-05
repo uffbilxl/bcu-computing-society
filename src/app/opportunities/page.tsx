@@ -4,6 +4,7 @@ export const revalidate = 300
 import { Suspense } from 'react'
 import { prisma } from '@/lib/prisma'
 import { OpportunitiesClient } from '@/components/opportunities/OpportunitiesClient'
+import { openDeadlineFloor } from '@/lib/time'
 
 /* Prerendering at build time means the build needs a reachable database, so a
  * database that is merely unavailable *right then* fails the whole deploy —
@@ -27,7 +28,7 @@ function queryOpportunities() {
     // status !== CLOSED alone isn't enough — a listing whose deadline has
     // simply passed stays OPEN in the DB until something notices, but
     // shouldn't be shown (or offered to "apply" to) as if it still were.
-    where: { status: { not: 'CLOSED' }, OR: [{ deadline: null }, { deadline: { gte: new Date() } }] },
+    where: { status: { not: 'CLOSED' }, OR: [{ deadline: null }, { deadline: { gte: openDeadlineFloor() } }] },
     include: {
       company: true,
       tags: { include: { tag: true } },

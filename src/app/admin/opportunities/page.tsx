@@ -13,8 +13,8 @@ async function getOpportunities() {
 }
 
 const statusColour: Record<string, string> = {
-  OPEN: 'text-green-700',
-  CLOSING_SOON: 'text-amber-700',
+  OPEN: 'text-[var(--color-ok)]',
+  CLOSING_SOON: 'text-[var(--color-warn)]',
   CLOSED: 'text-[var(--t4)]',
 }
 

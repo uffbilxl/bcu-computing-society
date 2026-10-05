@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FileText, Download, FileCode, Zap, BookOpen, type LucideIcon } from 'lucide-react'
+import { FileText, Download, Zap, BookOpen, Mail, ArrowUpRight, type LucideIcon } from 'lucide-react'
 
 interface Resource {
   title: string
@@ -11,7 +11,7 @@ interface Resource {
 interface Category {
   id: string
   label: string
-  color: string
+  blurb: string
   Icon: LucideIcon
   resources: Resource[]
 }
@@ -20,7 +20,7 @@ const CATEGORIES: Category[] = [
   {
     id: 'cv',
     label: 'CV Templates',
-    color: 'var(--acc)',
+    blurb: 'Word templates you can edit and send. Or build one in the CV Builder.',
     Icon: FileText,
     resources: [
       {
@@ -40,7 +40,7 @@ const CATEGORIES: Category[] = [
   {
     id: 'cover-letter',
     label: 'Cover Letters',
-    color: '#22c55e',
+    blurb: 'A structure that works for tech applications, with notes on what to put where.',
     Icon: FileText,
     resources: [
       {
@@ -53,7 +53,7 @@ const CATEGORIES: Category[] = [
   {
     id: 'cheat-sheets',
     label: 'Cheat Sheets',
-    color: '#f59e0b',
+    blurb: 'One-page references for the languages and tools you use every week.',
     Icon: Zap,
     resources: [
       {
@@ -96,7 +96,7 @@ const CATEGORIES: Category[] = [
   {
     id: 'guides',
     label: 'Guides',
-    color: '#a855f7',
+    blurb: 'Longer reads on the application process.',
     Icon: BookOpen,
     resources: [
       {
@@ -115,127 +115,123 @@ function fileType(url: string): string {
 
 export default function ResourcesPage() {
   return (
-    <div className="max-w-[900px] mx-auto px-5 sm:px-8 py-10 sm:py-14" style={{ position: 'relative', zIndex: 1 }}>
-
-      {/* Header */}
-      <div className="mb-12">
-        <span className="eyebrow mb-3">BCU Computing Society</span>
-        <h1
-          className="text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-tight text-[var(--color-text)] mb-3"
-          style={{ fontFamily: 'var(--font-geist-sans)' }}
-        >
-          Resources
-        </h1>
-        <p className="text-sm text-[var(--color-muted)] max-w-lg leading-relaxed">
+    <div className="max-w-[960px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
+      <header>
+        <h1 className="page-title enter">Resources</h1>
+        <p className="page-lede mt-3 enter" style={{ '--i': 1 } as React.CSSProperties}>
           Templates and guides to help you land your next opportunity. CVs, cover letters, cheat sheets, and more.
         </p>
-      </div>
+        <nav aria-label="Resource categories" className="enter mt-6 flex flex-wrap gap-2" style={{ '--i': 2 } as React.CSSProperties}>
+          {CATEGORIES.map(cat => (
+            <a
+              key={cat.id}
+              href={`#${cat.id}`}
+              className="inline-flex items-center gap-2 h-9 px-3 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[14px] text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors focus-ring"
+            >
+              <cat.Icon size={14} className="text-[var(--color-accent-text)]" aria-hidden="true" />
+              {cat.label}
+              <span className="text-[12px] text-[var(--color-muted-2)] tabular-nums">
+                {cat.resources.filter(r => r.fileUrl).length || '–'}
+              </span>
+            </a>
+          ))}
+        </nav>
+      </header>
 
-      {/* Categories */}
-      <div className="flex flex-col gap-14">
+      <div className="mt-12 flex flex-col gap-14">
         {CATEGORIES.map(cat => {
-          const CatIcon = cat.Icon
+          const files = cat.resources.filter(r => r.fileUrl)
+          const upcoming = cat.resources.filter(r => !r.fileUrl)
           return (
-            <section key={cat.id}>
-              {/* Section header */}
-              <div className="flex items-center gap-3 mb-6">
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: `${cat.color}18`, color: cat.color }}
-                >
-                  <CatIcon size={14} aria-hidden="true" />
-                </div>
+            <section key={cat.id} id={cat.id} aria-labelledby={`${cat.id}-title`} className="reveal">
+              <div className="flex items-start gap-3 mb-5">
                 <span
-                  className="text-[13px] font-semibold text-[var(--color-text)]"
-                  style={{ fontFamily: 'var(--font-geist-sans)' }}
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'var(--color-accent-dim)', color: 'var(--color-accent-text)' }}
                 >
-                  {cat.label}
+                  <cat.Icon size={18} aria-hidden="true" />
                 </span>
-                <div className="flex-1 h-px bg-[var(--color-border)]" />
-                <span className="text-[10px] text-[var(--color-muted)]">
-                  {cat.resources.length} {cat.resources.length === 1 ? 'item' : 'items'}
-                </span>
+                <div>
+                  <h2 id={`${cat.id}-title`} className="text-[20px] font-semibold tracking-[-0.01em] text-[var(--color-text)]">
+                    {cat.label}
+                  </h2>
+                  <p className="text-[14px] text-[var(--color-muted)] mt-0.5">{cat.blurb}</p>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {cat.resources.map(resource => (
-                  <div
-                    key={resource.title}
-                    className="flex flex-col gap-4 p-5 rounded-2xl border transition-all duration-200 hover:border-[rgba(var(--hairline-rgb),0.14)]"
-                    style={{ background: 'var(--card-gradient)', borderColor: 'rgba(var(--hairline-rgb),0.07)' }}
-                  >
-                    {/* Top */}
-                    <div className="flex items-start gap-3">
-                      <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                        style={{
-                          background: `${cat.color}15`,
-                          color: cat.color,
-                          border: `1px solid ${cat.color}30`,
-                        }}
-                      >
-                        <FileCode size={16} aria-hidden="true" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <p
-                            className="text-[13px] font-semibold text-[var(--color-text)] leading-tight"
-                            style={{ fontFamily: 'var(--font-geist-sans)' }}
-                          >
-                            {resource.title}
-                          </p>
-                          {resource.pages && (
-                            <span className="badge-gray">{resource.pages}</span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-[var(--color-muted)] leading-relaxed">
-                          {resource.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Action */}
-                    {resource.fileUrl ? (
+              {files.length > 0 && (
+                <ul className={`card overflow-hidden grid ${files.length > 2 ? 'sm:grid-cols-2' : ''}`}>
+                  {files.map((resource, i) => (
+                    <li
+                      key={resource.title}
+                      className={`border-[var(--color-border-subtle)] ${i > 0 ? 'border-t' : ''} ${
+                        files.length > 2 && i === 1 ? 'sm:border-t-0' : ''
+                      } ${files.length > 2 && i % 2 === 1 ? 'sm:border-l' : ''}`}
+                    >
                       <a
                         href={resource.fileUrl}
                         download
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-semibold text-white w-fit transition-opacity hover:opacity-85 focus-ring"
-                        style={{ background: cat.color }}
+                        className="group h-full flex items-center gap-4 p-4 sm:p-5 hover:bg-[var(--color-surface-hover)] transition-colors duration-150 focus-ring"
                       >
-                        <Download size={12} aria-hidden="true" />
-                        Download {fileType(resource.fileUrl)}
+                        <span
+                          className="w-11 h-12 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] flex items-center justify-center flex-shrink-0 text-[10px] font-bold tracking-wide text-[var(--color-muted)] transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:-rotate-3"
+                          aria-hidden="true"
+                        >
+                          {fileType(resource.fileUrl!)}
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[15px] font-semibold text-[var(--color-text)]">{resource.title}</span>
+                            {resource.pages && <span className="badge-gray">{resource.pages}</span>}
+                          </span>
+                          <span className="block text-[13px] text-[var(--color-muted)] leading-relaxed mt-0.5">
+                            {resource.description}
+                          </span>
+                        </span>
+                        <span className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-[var(--color-accent-text)] bg-[var(--color-accent-dim)] transition-transform duration-200 group-hover:translate-y-0.5">
+                          <Download size={16} aria-hidden="true" />
+                          <span className="sr-only">Download {fileType(resource.fileUrl!)}</span>
+                        </span>
                       </a>
-                    ) : (
-                      <button
-                        disabled
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-semibold text-white w-fit opacity-30 cursor-not-allowed"
-                        style={{ background: cat.color }}
-                      >
-                        <Download size={12} aria-hidden="true" />
-                        Coming Soon
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {upcoming.map(resource => (
+                <div
+                  key={resource.title}
+                  className="rounded-2xl border border-dashed border-[var(--color-border)] px-5 py-5 text-[14px]"
+                >
+                  <p className="font-semibold text-[var(--color-text)]">{resource.title}</p>
+                  <p className="text-[var(--color-muted)] mt-0.5">{resource.description}</p>
+                </div>
+              ))}
             </section>
           )
         })}
       </div>
 
-      {/* Footer note */}
-      <div className="mt-14 pt-6 border-t border-[var(--color-border)]">
-        <p className="text-[12px] text-[var(--color-muted)]">
-          Have a resource to contribute?{' '}
-          <Link
-            href="https://tally.so/r/681g7e"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[var(--color-accent)] hover:underline focus-ring rounded"
-          >
-            Get in touch →
-          </Link>
-        </p>
+      <div className="mt-14 card p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+        <span
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: 'var(--color-surface-2)', color: 'var(--color-accent-text)' }}
+        >
+          <Mail size={18} aria-hidden="true" />
+        </span>
+        <div className="flex-1">
+          <p className="text-[15px] font-semibold text-[var(--color-text)]">Have a resource to contribute?</p>
+          <p className="text-[14px] text-[var(--color-muted)]">Templates, guides or cheat sheets that helped you: send them our way.</p>
+        </div>
+        <Link
+          href="https://tally.so/r/681g7e"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-ghost focus-ring"
+        >
+          Get in touch
+          <ArrowUpRight size={15} aria-hidden="true" />
+        </Link>
       </div>
     </div>
   )

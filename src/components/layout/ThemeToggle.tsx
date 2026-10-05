@@ -41,7 +41,10 @@ export function ThemeToggle({ className, iconSize = 15 }: { className?: string; 
       aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
       className={className}
     >
-      {theme === 'light' ? <Moon size={iconSize} aria-hidden="true" /> : <Sun size={iconSize} aria-hidden="true" />}
+      {/* Keyed so the icon re-mounts and spins in on every switch */}
+      <span key={theme} className="theme-icon inline-flex">
+        {theme === 'light' ? <Moon size={iconSize} aria-hidden="true" /> : <Sun size={iconSize} aria-hidden="true" />}
+      </span>
     </button>
   )
 }

@@ -1,142 +1,64 @@
-# BCUSCA Design System
+# BCU Computing Society design system
 
-**Theme:** Dark Precision — surgical whitespace, cinematic typography, intentional micro-interactions.
+The palette, type and components behind bcucompsoc.com. Tokens live in `src/app/globals.css`; Tailwind's colour names in `tailwind.config.ts` point at the same CSS variables, so both follow the active theme.
 
----
+## Colour
 
-## Colour Tokens
+Taken from the society logo: a navy field (`#0F1A2C`) with a bright blue accent (`#3B82F6`).
 
-All colours live in `:root` inside `globals.css`. Never hardcode hex values outside this block.
+- **Dark mode** is the logo itself: navy surfaces, white text.
+- **Light mode** is the logo's ink on a cool off-white.
+- **Brand bands** (the home hero, the "You belong here" panel, the About mission, the footer) are navy in both themes. Text on them uses fixed light values, not theme tokens.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--color-bg` | `#08090a` | Page background |
-| `--color-surface` | `#111214` | Cards, panels, surfaces |
-| `--color-border` | `#1e2024` | All borders |
-| `--color-accent` | `#6366f1` | Primary CTA, links, active states |
-| `--color-accent-glow` | `rgba(99,102,241,0.2)` | Shadow glows |
-| `--color-text` | `#f1f2f4` | Primary text |
-| `--color-muted` | `#6b7280` | Secondary / helper text |
-| `--color-tag` | `#1a1d23` | Pill / tag backgrounds |
+| Token | Use |
+|---|---|
+| `--color-bg`, `--color-surface`, `--color-surface-2`, `--color-surface-hover` | Page, cards, raised areas, hover |
+| `--color-border`, `--color-border-subtle` | Borders and dividers |
+| `--color-text`, `--color-muted`, `--color-muted-2` | Primary, secondary and tertiary text. All pass WCAG AA (4.5:1) in both themes |
+| `--color-accent` | Filled buttons and selected states (white text on it is 5.2:1) |
+| `--color-accent-text` | Links and accent-coloured text on page backgrounds |
+| `--color-accent-dim`, `--color-accent-border` | Tinted icon tiles, selected cells, badges |
+| `--color-ok`, `--color-warn`, `--color-danger` (+ `-dim`) | Status. Each has a light and dark value; don't use fixed Tailwind shades like `amber-400`, which only read in one theme |
 
-Legacy aliases (`--bg`, `--t1`, etc.) are preserved for admin pages and should not be used in new components.
+The legacy aliases (`--t1`…`--t4`, `--b1`…`--b3`, `--bg2`…) map onto these, so older and admin markup follows the palette. New code should use the `--color-*` names.
 
----
+Colour means something: blue is for actions and selection, amber for "closing soon", green for open/OK, red for closed or errors. Opportunity types (internship, placement…) are neutral badges.
 
-## Typography
+## Type
 
-### Fonts
-- **Display / UI:** `var(--font-geist-sans)` — bold headlines, nav, card titles
-- **Body:** system fallback via Geist Sans variable (`Inter` as fallback)
-- **Mono:** `var(--font-geist-mono)` — eyebrow labels, counters, code-style tags
+One family: Geist (loaded in `layout.tsx`). Hierarchy comes from size and weight.
 
-Both fonts are loaded in `layout.tsx` via the `geist` npm package.
+- Page titles: `.page-title` with `.page-lede` underneath.
+- Section headings: `.display-headline` at 26–40px.
+- Body copy: 15px, line length capped around 65ch.
+- Nothing below 12px.
 
-### Scale
+## Components
 
-| Token | Size | Use |
-|-------|------|-----|
-| `--text-xs` | `0.75rem` | Eyebrow labels, badges |
-| `--text-sm` | `0.875rem` | Body small, footer |
-| `--text-base` | `1rem` | Default body |
-| `--text-lg` | `1.125rem` | Subtitles, hero sub |
-| `--text-2xl` | `1.5rem` | Section headings (small) |
-| `--text-3xl` | `2rem` | Section headings |
-| `--text-4xl` | `2.75rem` | Page headings |
-| `--text-5xl` | `3.75rem` | Hero |
-| `--text-6xl` | `5rem` | Hero (max) |
+All in the `@layer components` block of `globals.css`.
 
-For responsive headlines, use `clamp()`: `font-size: clamp(1.75rem, 4vw, 2.75rem)`.
+- **Buttons:** `.btn-primary`, `.btn-ghost`, `.btn-on-navy` (for navy bands), with `.btn-sm` / `.btn-lg`. One shape everywhere: 10px radius, 40px tall by default.
+- **Badges:** `.badge-blue`, `-green`, `-amber`, `-red`, `-gray`.
+- **Surfaces:** `.card`, and `.card-interactive` for whole-card links (lifts on hover).
+- **Forms:** `.input`, `.label`.
+- **Focus:** `.focus-ring` on interactive elements; anything without it still gets a visible outline.
 
----
+The wordmark (`src/components/ui/Wordmark.tsx`) is set in type rather than an image, so it follows the theme.
 
-## The Signature Gradient
+## Motion
 
-Used on the hero and the CTA "You belong here." headline only. Apply sparingly — one bold visual moment per page.
+Two CSS utilities, both switched off for `prefers-reduced-motion`:
 
-```css
-background: linear-gradient(135deg, #6366f1 0%, #a5b4fc 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-```
+- `.enter`: a short rise-in as the page loads, for the first things on screen. Stagger with `style={{ '--i': n }}`.
+- `.reveal`: tied to scroll position with a CSS view timeline. No JavaScript, so content can't get stuck invisible; browsers without view timelines simply show it.
 
-Tailwind shorthand: `.gradient-text` utility class.
+Framer Motion handles state changes: the sliding nav highlight, dropdown and menu open/close, calendar month changes, committee filtering.
 
----
-
-## Component Patterns
-
-### Eyebrow labels
-```html
-<span class="eyebrow">// section name</span>
-```
-Mono font, `xs`, indigo, `tracking-widest`, uppercase. Precedes every section h2.
-
-### Cards
-Surface bg + 1px border + `rounded-xl`:
-```html
-<div class="card">...</div>
-```
-Hover state: `translateY(-4px)` + accent border tint + `shadow-[0_20px_40px_rgba(0,0,0,0.4)]`.
-
-### Buttons
-```html
-<!-- Primary -->
-<button class="btn-primary">Label</button>
-
-<!-- Ghost -->
-<button class="btn-ghost">Label</button>
-```
-Both use `rounded-full` pill shape.
-
-### Badges
-```html
-<span class="badge-blue">Internship</span>
-<span class="badge-green">Open</span>
-<span class="badge-amber">Closing soon</span>
-<span class="badge-red">Closed</span>
-<span class="badge-gray">Tag</span>
-```
-
-### Focus rings (accessibility)
-Every interactive element uses `.focus-ring`:
-```html
-<button class="focus-ring">...</button>
-```
-This applies `outline: none` on focus and `ring-2 ring-[--color-accent]` on `:focus-visible`.
-
----
-
-## Animation Guidelines
-
-```
-Hover transitions:  200–300ms, cubic-bezier(0.4, 0, 0.2, 1)
-Page entrance:      opacity 0→1 + translateY(24px→0), via <FadeIn> component
-Scroll reveals:     framer-motion whileInView, viewport.once = true
-Reduced motion:     @media (prefers-reduced-motion) disables all in globals.css
-```
-
-Use `<FadeIn delay={i * 0.06}>` for staggered grid items.
-
-**Do not** add animation just to fill space. Every motion must serve the content.
-
----
+Avoid scroll-triggered reveals that start hidden and rely on JavaScript to show content. The old `FadeIn` component did this and left whole sections blank; it is now a plain wrapper kept for compatibility.
 
 ## Layout
 
-- Max content width: `max-w-[1280px] mx-auto`
-- Horizontal padding: `px-6 sm:px-10`
-- Section vertical rhythm: `py-20 sm:py-28`
-- Breakpoints: `sm: 640px` · `md: 768px` · `lg: 1024px` · `xl: 1280px`
-
----
-
-## What NOT to do
-
-- No light mode — this site is dark-only.
-- No hardcoded hex values outside `:root`.
-- No glassmorphism cards everywhere — frosted glass is reserved for the Navbar only.
-- No gradient backgrounds on entire sections — only the hero radial glow and the headline gradient text.
-- No drop shadows on resting card states — shadow only on hover/elevated states.
-- No carousel/slider components — use grids.
+- Content width: 1200px for wide pages, 960–1040px for reading pages, with `px-5 sm:px-8` gutters.
+- Section rhythm: `py-20 sm:py-24`.
+- Full navigation from 1024px; below that, the menu button.
+- Layering uses the `--z-*` scale (sticky, dropdown, overlay, modal, toast).

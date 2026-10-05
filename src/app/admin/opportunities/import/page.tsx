@@ -121,9 +121,9 @@ export default function ImportPage() {
           <div className="text-[10px] font-semibold text-[var(--t4)] uppercase tracking-widest mb-4">Import complete</div>
           <div className="grid grid-cols-4 gap-3 mb-4">
             {[
-              { n: result.added, label: 'Added', colour: 'text-green-700' },
+              { n: result.added, label: 'Added', colour: 'text-[var(--color-ok)]' },
               { n: result.updated, label: 'Updated', colour: 'text-[var(--t2)]' },
-              { n: result.closed, label: 'Closed', colour: 'text-amber-700' },
+              { n: result.closed, label: 'Closed', colour: 'text-[var(--color-warn)]' },
               { n: result.skipped, label: 'Skipped', colour: 'text-[var(--t4)]' },
             ].map(s => (
               <div key={s.label} className="text-center bg-[var(--bg3)] border border-[var(--b1)] py-3">
@@ -138,7 +138,7 @@ export default function ImportPage() {
               <div className="text-[10px] font-semibold text-[var(--t4)] uppercase tracking-widest mb-2">Warnings ({result.errors.length})</div>
               <div className="space-y-1 max-h-40 overflow-y-auto">
                 {result.errors.map((e, i) => (
-                  <div key={i} className="text-[11px] font-mono text-amber-700 border border-amber-700/20 bg-amber-50 px-2 py-1">{e}</div>
+                  <div key={i} className="text-[11px] font-mono text-[var(--color-warn)] border border-[var(--color-warn)] bg-[var(--color-warn-dim)] px-2 py-1">{e}</div>
                 ))}
               </div>
             </div>

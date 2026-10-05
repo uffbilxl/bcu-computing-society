@@ -1,23 +1,17 @@
-'use client'
-import { motion } from 'framer-motion'
-
-interface FadeInProps {
+/* Previously a scroll-triggered reveal. Content started at opacity 0 and
+ * only appeared once an IntersectionObserver fired, so anything that didn't
+ * scroll it into view (link previews, print, full-page captures, a fast
+ * jump to an anchor) saw blank sections. Product pages load straight into
+ * the task, so this now renders its children as-is; the API is kept so
+ * existing call sites don't change. */
+export function FadeIn({
+  children,
+  className,
+}: {
   children: React.ReactNode
   delay?: number
   y?: number
   className?: string
-}
-
-export function FadeIn({ children, delay = 0, y = 24, className }: FadeInProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  )
+}) {
+  return <div className={className}>{children}</div>
 }

@@ -1,26 +1,43 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { formatDistanceToNow, format, isPast, differenceInDays } from 'date-fns'
+import { formatDistanceToNow } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
+import { daysToDeadline } from './time'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/* Deadlines are UK calendar days (see deadlineDay in ./time), so they are
+ * formatted as that day rather than shifted into the viewer's timezone,
+ * where a US visitor would see the day before. */
 export function formatDeadline(date: Date | null): string {
   if (!date) return 'No deadline'
-  return format(date, 'MMM d, yyyy')
+  return formatInTimeZone(date, 'Europe/London', 'd MMM yyyy')
+}
+
+/* Relative phrasing to sit beside the date, never instead of it. */
+export function deadlineHint(date: Date | null): string | null {
+  if (!date) return null
+  const d = daysToDeadline(date)
+  if (d < 0) return 'Closed'
+  if (d === 0) return 'Closes today'
+  if (d === 1) return 'Closes tomorrow'
+  if (d <= 30) return `Closes in ${d} days`
+  return null
 }
 
 export function deadlineStatus(date: Date | null): 'open' | 'closing' | 'closed' {
   if (!date) return 'open'
-  if (isPast(date)) return 'closed'
-  if (differenceInDays(date, new Date()) <= 7) return 'closing'
+  const d = daysToDeadline(date)
+  if (d < 0) return 'closed'
+  if (d <= 7) return 'closing'
   return 'open'
 }
 
 export function daysUntil(date: Date | null): number | null {
   if (!date) return null
-  return differenceInDays(date, new Date())
+  return daysToDeadline(date)
 }
 
 export function formatTimeAgo(date: Date): string {
@@ -47,15 +64,11 @@ export function opportunityTypeLabel(type: string): string {
   return map[type] ?? type
 }
 
-export function opportunityTypeBadgeClass(type: string): string {
-  const map: Record<string, string> = {
-    INTERNSHIP: 'badge-blue',
-    PLACEMENT: 'badge-purple',
-    GRADUATE: 'badge-green',
-    SPRING_WEEK: 'badge-amber',
-    INSIGHT: 'badge-cyan',
-  }
-  return map[type] ?? 'badge-gray'
+/* Type is a category, not a state, so it stays neutral. Colour is kept for
+ * what needs attention (closing soon, new, closed); a spring week in amber
+ * read as "closing soon" at a glance. */
+export function opportunityTypeBadgeClass(_type: string): string {
+  return 'badge-gray'
 }
 
 export function workModeLabel(mode: string): string {

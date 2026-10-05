@@ -1,7 +1,7 @@
 'use client'
-import { forwardRef, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, MotionConfig, useReducedMotion } from 'framer-motion'
 import { Globe, Mail, ArrowUpRight } from 'lucide-react'
 
 /* ── Types ─────────────────────────────────────────────────── */
@@ -38,13 +38,13 @@ interface Person {
    avatar rings and glows so contrast stays token-driven in both themes.
    ──────────────────────────────────────────────────────────── */
 const GROUPS: Group[] = [
-  { id: 'leadership', label: 'Leadership',              color: '#6366f1', kind: 'core' },
+  { id: 'leadership', label: 'Leadership',              color: '#3B82F6', kind: 'core' },
   { id: 'software',   label: 'Software Engineering',    short: 'Software',  color: '#22c55e', kind: 'department' },
   { id: 'cyber',      label: 'Cyber Security',          short: 'Cyber',     color: '#ef4444', kind: 'department' },
   { id: 'ai',         label: 'Artificial Intelligence', short: 'AI',        color: '#a855f7', kind: 'department' },
   { id: 'compsci',    label: 'Computer Science',        short: 'Comp Sci',  color: '#f59e0b', kind: 'department' },
-  { id: 'platforms',  label: 'Technical Platforms',     short: 'Platforms', color: '#f97316', kind: 'team' },
-  { id: 'research',   label: 'Research & Development',  short: 'R&D',       color: '#8b5cf6', kind: 'team' },
+  { id: 'platforms',  label: 'Technical Platforms',     short: 'Platforms', color: '#06b6d4', kind: 'team' },
+  { id: 'research',   label: 'Research & Development',  short: 'R&D',       color: '#ec4899', kind: 'team' },
 ]
 
 const GROUP_BY_ID = Object.fromEntries(GROUPS.map(g => [g.id, g])) as Record<GroupId, Group>
@@ -256,8 +256,8 @@ function SocialLinks({ person, size = 26 }: { person: Person; size?: number }) {
           style={box}
           title={person.email}
           className="flex items-center justify-center rounded-lg border transition-[background-color,border-color,color,transform] duration-200 ease-out
-                     text-[var(--color-accent)] bg-[var(--color-accent-dim)] border-[rgba(99,102,241,0.28)]
-                     hover:bg-[rgba(99,102,241,0.24)] hover:border-[rgba(99,102,241,0.55)] hover:-translate-y-px
+                     text-[var(--color-accent-text)] bg-[var(--color-accent-dim)] border-[rgba(59,130,246,0.28)]
+                     hover:bg-[rgba(59,130,246,0.24)] hover:border-[rgba(59,130,246,0.55)] hover:-translate-y-px
                      focus-ring"
           aria-label={`Email ${person.name}`}
         >
@@ -292,7 +292,7 @@ function MemberRow({
   const inner = (
     <>
       <div
-        className="flex items-center justify-center rounded-xl text-[11px] font-bold tracking-wide flex-shrink-0 transition-shadow duration-300"
+        className="flex items-center justify-center rounded-xl text-[12px] font-bold tracking-wide flex-shrink-0 transition-shadow duration-300"
         style={{
           width: 38,
           height: 38,
@@ -316,7 +316,7 @@ function MemberRow({
         >
           {vacant ? 'Open role' : person.name}
         </p>
-        <p className="text-[11.5px] leading-snug text-[var(--color-muted)] mt-0.5 truncate">
+        <p className="text-[13px] leading-snug text-[var(--color-muted)] mt-0.5 truncate">
           {role.title}
           {elsewhere.length > 0 && (
             <span className="text-[var(--color-muted-2)]"> · also in {elsewhere.join(', ')}</span>
@@ -325,7 +325,7 @@ function MemberRow({
       </div>
 
       {vacant ? (
-        <span className="flex items-center gap-1.5 flex-shrink-0 text-[11px] font-medium text-[var(--color-accent)]">
+        <span className="flex items-center gap-1.5 flex-shrink-0 text-[12px] font-medium text-[var(--color-accent-text)]">
           Apply
           <ArrowUpRight size={13} className="transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
@@ -405,7 +405,7 @@ const DepartmentSection = forwardRef<HTMLElement, {
         <h2 className="text-[12px] font-bold uppercase tracking-[0.12em] text-[var(--color-text)]">
           {group.label}
         </h2>
-        <span className="ml-auto text-[11px] tabular-nums text-[var(--color-muted)]">
+        <span className="ml-auto text-[12px] tabular-nums text-[var(--color-muted)]">
           {people.length} {people.length === 1 ? 'person' : 'people'}
         </span>
       </div>
@@ -484,8 +484,8 @@ function LeaderCard({
       }`}
       style={{
         background: 'var(--card-gradient)',
-        borderColor: spotlight ? 'rgba(99,102,241,0.42)' : 'rgba(99,102,241,0.28)',
-        boxShadow: spotlight ? '0 0 64px rgba(99,102,241,0.16)' : '0 0 44px rgba(99,102,241,0.09)',
+        borderColor: spotlight ? 'rgba(59,130,246,0.42)' : 'rgba(59,130,246,0.28)',
+        boxShadow: spotlight ? '0 0 64px rgba(59,130,246,0.16)' : '0 0 44px rgba(59,130,246,0.09)',
       }}
     >
       {/* Indigo bloom, drawn once on entry */}
@@ -494,7 +494,7 @@ function LeaderCard({
         className="absolute pointer-events-none"
         style={{
           top: -150, right: -110, width: spotlight ? 420 : 320, height: spotlight ? 420 : 320,
-          background: 'radial-gradient(circle, rgba(99,102,241,0.22) 0%, transparent 68%)',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.22) 0%, transparent 68%)',
         }}
         initial={reduced ? { opacity: 0.6 } : { opacity: 0, scale: 0.7 }}
         animate={{ opacity: 0.6, scale: 1 }}
@@ -515,9 +515,9 @@ function LeaderCard({
           style={{
             width: spotlight ? 72 : 56, height: spotlight ? 72 : 56,
             color: 'var(--color-text)',
-            background: 'rgba(99,102,241,0.18)',
-            border: '1px solid rgba(99,102,241,0.5)',
-            boxShadow: '0 0 26px rgba(99,102,241,0.22)',
+            background: 'rgba(59,130,246,0.18)',
+            border: '1px solid rgba(59,130,246,0.5)',
+            boxShadow: '0 0 26px rgba(59,130,246,0.22)',
           }}
         >
           {initials(person.name)}
@@ -527,9 +527,9 @@ function LeaderCard({
           <span
             className="inline-block mb-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.14em] whitespace-nowrap"
             style={{
-              background: 'rgba(99,102,241,0.14)',
+              background: 'rgba(59,130,246,0.14)',
               color: 'var(--color-text)',
-              border: '1px solid rgba(99,102,241,0.32)',
+              border: '1px solid rgba(59,130,246,0.32)',
             }}
           >
             {title.title}
@@ -550,7 +550,7 @@ function LeaderCard({
                 return (
                   <span
                     key={r.group}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] border"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] border"
                     style={{
                       color: 'var(--color-muted)',
                       background: 'rgba(var(--hairline-rgb),0.04)',
@@ -619,7 +619,7 @@ function FilterPill({
       )}
       <span className="relative whitespace-nowrap">{label}</span>
       <span
-        className="relative text-[10.5px] tabular-nums"
+        className="relative text-[12px] tabular-nums"
         style={{ color: 'var(--color-muted)' }}
       >
         {count}
@@ -631,7 +631,14 @@ function FilterPill({
 /* ── Page ──────────────────────────────────────────────────── */
 export default function CommitteePage() {
   const [filter, setFilter] = useState<GroupId | 'all'>('all')
-  const reduced = useReducedMotion() ?? false
+  /* Initial animation states must match between server and client, so they
+   * can't branch on the media query; MotionConfig below makes framer honour
+   * reduced motion itself. `reduced` still switches off the springier
+   * layout motion, but only once mounted. */
+  const prefersReduced = useReducedMotion()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const reduced = mounted && !!prefersReduced
 
   // Stagger the grid once on first paint, then never again — refiltering
   // should read as a reflow, not as the page loading a second time.
@@ -673,7 +680,8 @@ export default function CommitteePage() {
   const teams = GROUPS.filter(g => g.kind === 'team')
 
   return (
-    <div className="max-w-[900px] mx-auto px-5 sm:px-8 py-10 sm:py-14" style={{ position: 'relative', zIndex: 1 }}>
+    <MotionConfig reducedMotion="user">
+    <div className="max-w-[960px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
 
       {/* ── Header ─────────────────────────────────────────── */}
       <motion.header
@@ -682,14 +690,8 @@ export default function CommitteePage() {
         transition={{ duration: reduced ? 0.001 : 0.45, ease: [0.16, 1, 0.3, 1] }}
         className="mb-9"
       >
-        <span className="eyebrow mb-3 block">BCU Computing Society</span>
-        <h1
-          className="display-headline mb-3"
-          style={{ fontSize: 'clamp(1.75rem, 5vw, 2.75rem)', textWrap: 'balance' }}
-        >
-          Meet the Committee
-        </h1>
-        <p className="text-sm text-[var(--color-muted)] max-w-[60ch] leading-relaxed">
+        <h1 className="page-title mb-3">Meet the committee</h1>
+        <p className="page-lede">
           {everyone.length} students running BCUComputingSoc across {departments.length} departments and {teams.length} teams.
           Filter by the area you care about, or find someone to talk to.
         </p>
@@ -727,7 +729,7 @@ export default function CommitteePage() {
           ))}
         </div>
 
-        <div className="mt-3 flex items-center gap-2 text-[11px] text-[var(--color-muted)]">
+        <div className="mt-3 flex items-center gap-2 text-[12px] text-[var(--color-muted)]">
           <span className="tabular-nums">
             Showing {shownCount} of {everyone.length}
           </span>
@@ -772,12 +774,13 @@ export default function CommitteePage() {
             href={APPLY_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[var(--color-accent)] hover:underline focus-ring rounded"
+            className="text-[var(--color-accent-text)] hover:underline focus-ring rounded"
           >
             Apply here →
           </Link>
         </p>
       </div>
     </div>
+    </MotionConfig>
   )
 }

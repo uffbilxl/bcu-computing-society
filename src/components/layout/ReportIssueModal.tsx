@@ -65,7 +65,7 @@ export function ReportIssueModal({ onClose }: Props) {
           {/* Icon */}
           <div
             className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
-            style={{ background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)' }}
+            style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)' }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -95,8 +95,8 @@ export function ReportIssueModal({ onClose }: Props) {
                 transition={{ delay: 0.12 + i * 0.06, duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
                 onMouseEnter={e => {
                   const el = e.currentTarget as HTMLAnchorElement
-                  el.style.borderColor = 'rgba(99,102,241,0.3)'
-                  el.style.background = 'rgba(99,102,241,0.06)'
+                  el.style.borderColor = 'rgba(59,130,246,0.3)'
+                  el.style.background = 'rgba(59,130,246,0.06)'
                 }}
                 onMouseLeave={e => {
                   const el = e.currentTarget as HTMLAnchorElement

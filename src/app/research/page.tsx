@@ -46,85 +46,68 @@ const PAPERS: Paper[] = [
 
 export default function ResearchPage() {
   return (
-    <div className="max-w-[900px] mx-auto px-5 sm:px-8 py-10 sm:py-14" style={{ position: 'relative', zIndex: 1 }}>
-
-      {/* Header */}
-      <div className="mb-12">
-        <span className="eyebrow mb-3">BCU Computing Society</span>
-        <h1
-          className="text-[clamp(1.75rem,5vw,2.75rem)] font-bold tracking-tight text-[var(--color-text)] mb-3"
-          style={{ fontFamily: 'var(--font-geist-sans)' }}
-        >
-          Research
-        </h1>
-        <p className="text-sm text-[var(--color-muted)] max-w-lg leading-relaxed">
+    <div className="max-w-[960px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
+      <header className="mb-10">
+        <h1 className="page-title enter">Research</h1>
+        <p className="page-lede mt-3 enter" style={{ '--i': 1 } as React.CSSProperties}>
           Papers published by the Research &amp; Development department.
         </p>
-      </div>
+      </header>
 
-      {/* Papers */}
-      <div className="flex flex-col gap-4">
-        {PAPERS.map(paper => (
-          <div
+      <ol className="flex flex-col gap-4">
+        {PAPERS.map((paper, i) => (
+          <li
             key={paper.ssrnUrl}
-            className="flex flex-col gap-4 p-5 rounded-2xl border transition-all duration-200 hover:border-[rgba(var(--hairline-rgb),0.14)]"
-            style={{ background: 'var(--card-gradient)', borderColor: 'rgba(var(--hairline-rgb),0.07)' }}
+            className="reveal card p-5 sm:p-6 flex flex-col sm:flex-row gap-5 transition-colors duration-200 hover:border-[var(--color-border)]"
+            style={{ '--i': i } as React.CSSProperties}
           >
-            <div className="flex items-start gap-3">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: '#8b5cf615', color: '#8b5cf6', border: '1px solid #8b5cf630' }}
-              >
-                <FileText size={16} aria-hidden="true" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p
-                  className="text-[14px] font-semibold text-[var(--color-text)] leading-snug mb-1.5"
-                  style={{ fontFamily: 'var(--font-geist-sans)' }}
-                >
-                  {paper.title}
-                </p>
-                <p className="text-[11.5px] text-[var(--color-muted)] leading-relaxed">
-                  {paper.authors.map((author, i) => (
-                    <span key={author.name}>
-                      <Link
-                        href={author.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--color-accent)] hover:underline focus-ring rounded"
-                      >
-                        {author.name}
-                      </Link>
-                      {i < paper.authors.length - 1 && ' & '}
-                    </span>
-                  ))}
-                </p>
-              </div>
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+              style={{ background: 'var(--color-accent-dim)', color: 'var(--color-accent-text)' }}
+            >
+              <FileText size={20} aria-hidden="true" />
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <Link
-                href={paper.ssrnUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-semibold text-white w-fit transition-opacity hover:opacity-85 focus-ring"
-                style={{ background: '#8b5cf6' }}
-              >
-                <ExternalLink size={12} aria-hidden="true" />
-                View on SSRN
-              </Link>
-              <a
-                href={paper.pdfUrl}
-                download
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-semibold w-fit transition-colors border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--b2)] focus-ring"
-              >
-                <Download size={12} aria-hidden="true" />
-                Download PDF
-              </a>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-[17px] sm:text-[18px] font-semibold text-[var(--color-text)] leading-snug">
+                {paper.title}
+              </h2>
+              <p className="mt-2 text-[14px] text-[var(--color-muted)] leading-relaxed">
+                <span className="sr-only">Authors: </span>
+                {paper.authors.map((author, i) => (
+                  <span key={author.name}>
+                    <Link
+                      href={author.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-[var(--color-text)] underline decoration-[var(--color-border)] underline-offset-[3px] hover:decoration-[var(--color-accent-text)] hover:text-[var(--color-accent-text)] transition-colors rounded focus-ring"
+                    >
+                      {author.name}
+                    </Link>
+                    {i < paper.authors.length - 2 ? ', ' : i === paper.authors.length - 2 ? ' and ' : ''}
+                  </span>
+                ))}
+              </p>
+
+              <div className="mt-5 flex items-center gap-2 flex-wrap">
+                <Link
+                  href={paper.ssrnUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary btn-sm focus-ring"
+                >
+                  <ExternalLink size={14} aria-hidden="true" />
+                  Read on SSRN
+                </Link>
+                <a href={paper.pdfUrl} download className="btn-ghost btn-sm focus-ring">
+                  <Download size={14} aria-hidden="true" />
+                  Download PDF
+                </a>
+              </div>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   )
 }

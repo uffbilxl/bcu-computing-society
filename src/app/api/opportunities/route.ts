@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { openDeadlineFloor } from '@/lib/time'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
   // a top-level OR) so it composes safely with the search OR-group below.
   const where: any = {
     status: { not: 'CLOSED' },
-    AND: [{ OR: [{ deadline: null }, { deadline: { gte: new Date() } }] }],
+    AND: [{ OR: [{ deadline: null }, { deadline: { gte: openDeadlineFloor() } }] }],
   }
   if (type) where.type = type
   if (mode) where.workMode = mode

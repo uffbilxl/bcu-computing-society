@@ -8,9 +8,9 @@ export function FooterReportIssue() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors text-left focus-ring rounded"
+        className="text-sm text-[#A3B1C6] hover:text-white transition-colors text-left focus-ring rounded"
       >
-        Report an Issue
+        Report an issue
       </button>
       {open && <ReportIssueModal onClose={() => setOpen(false)} />}
     </>

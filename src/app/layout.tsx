@@ -10,8 +10,11 @@ import { AnimatedBackground } from '@/components/layout/AnimatedBackground'
 import { PageTransition } from '@/components/layout/PageTransition'
 import { FooterReportIssue } from '@/components/layout/FooterReportIssue'
 import { themeInitScript } from '@/components/layout/ThemeToggle'
+import { Wordmark } from '@/components/ui/Wordmark'
 
 export const metadata: Metadata = {
+  // Absolute base for the link-preview image, so shared links show the logo
+  metadataBase: new URL('https://bcucompsoc.com'),
   title: 'BCUComputingSoc - Birmingham City University Computing Society',
   description: 'From your first lecture to your first offer.',
   keywords: ['internship', 'placement', 'graduate', 'BCU', 'computing', 'tech', 'BCUComputingSoc'],
@@ -35,8 +38,10 @@ export const metadata: Metadata = {
 
 const footerLinks = [
   { href: '/opportunities', label: 'Opportunities' },
+  { href: '/sca-opportunities', label: 'Internal Roles' },
   { href: '/events', label: 'Events' },
   { href: '/committee', label: 'Committee' },
+  { href: '/research', label: 'Research' },
   { href: '/cv-builder', label: 'CV Builder' },
   { href: '/resources', label: 'Resources' },
   { href: '/about', label: 'About' },
@@ -48,60 +53,56 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-screen text-[var(--color-text)] antialiased" style={{ background: 'transparent' }}>
+      <body className="min-h-screen flex flex-col text-[var(--color-text)] antialiased">
         <AnimatedBackground />
         <Navbar />
-        <main>
+        <main className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
 
-        <footer
-          className="border-t border-[var(--color-border-subtle)]"
-          style={{ background: 'var(--footer-gradient)' }}
-        >
-          <div className="max-w-[1280px] mx-auto px-6 sm:px-10 py-14">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-12">
+        {/* Navy in both themes: the footer bookends every page in the logo's
+            own colours, so its text uses fixed on-navy values. */}
+        <footer style={{ background: 'var(--footer-gradient)' }} className="text-[#A3B1C6]">
+          <div className="max-w-[1200px] mx-auto px-5 sm:px-8 pt-14 pb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] gap-10 pb-12">
 
-              {/* Logo + tagline */}
               <div>
-                <div className="mb-4">
-                  <span className="text-xl font-bold tracking-tight text-[var(--color-text)]">BCUComputingSoc</span>
-                  <p className="text-xs text-[var(--color-muted)] mt-0.5">Birmingham City University</p>
-                </div>
-                <p className="text-sm text-[var(--color-muted)] leading-relaxed max-w-[220px]">
-                  From your first lecture to your first offer.
+                <Link href="/" className="inline-block rounded-md focus-ring" aria-label="BCU Computing Society home">
+                  <Wordmark size="lg" onNavy />
+                </Link>
+                <p className="mt-5 text-[15px] leading-relaxed max-w-[34ch]">
+                  From your first lecture to your first offer. Run by students at Birmingham City University.
                 </p>
-                <div className="flex items-center gap-2 mt-5">
+                <div className="flex items-center gap-2 mt-6">
                   <a
                     href="https://uk.linkedin.com/company/bcu-computing-society"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="BCUComputingSoc on LinkedIn"
-                    className="w-8 h-8 rounded-full border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border)] transition-colors focus-ring"
+                    aria-label="BCU Computing Society on LinkedIn"
+                    className="w-10 h-10 rounded-lg border border-white/15 flex items-center justify-center hover:text-white hover:bg-white/10 transition-colors focus-ring"
                   >
-                    <Linkedin size={15} aria-hidden="true" />
+                    <Linkedin size={17} aria-hidden="true" />
                   </a>
                   <a
                     href="https://www.instagram.com/bcucompsoc"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="BCUComputingSoc on Instagram"
-                    className="w-8 h-8 rounded-full border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border)] transition-colors focus-ring"
+                    aria-label="BCU Computing Society on Instagram"
+                    className="w-10 h-10 rounded-lg border border-white/15 flex items-center justify-center hover:text-white hover:bg-white/10 transition-colors focus-ring"
                   >
-                    <Instagram size={15} aria-hidden="true" />
+                    <Instagram size={17} aria-hidden="true" />
                   </a>
                 </div>
               </div>
 
-              {/* Navigation */}
               <div>
-                <p className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-widest mb-5">Navigation</p>
-                <nav className="flex flex-col gap-3">
+                <p className="text-[13px] font-semibold text-white mb-4">Explore</p>
+                <nav className="flex flex-col gap-2.5" aria-label="Footer">
                   {footerLinks.map(link => (
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+                      className="text-sm hover:text-white transition-colors w-fit rounded focus-ring"
                     >
                       {link.label}
                     </Link>
@@ -109,13 +110,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </nav>
               </div>
 
-              {/* Contact */}
               <div>
-                <p className="text-[10px] font-semibold text-[var(--color-muted)] uppercase tracking-widest mb-5">Contact</p>
-                <div className="flex flex-col gap-3">
+                <p className="text-[13px] font-semibold text-white mb-4">Contact</p>
+                <div className="flex flex-col gap-2.5">
                   <a
                     href="mailto:bilal.arshad2@mail.bcu.ac.uk"
-                    className="text-sm text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors break-all"
+                    className="text-sm hover:text-white transition-colors break-all w-fit rounded focus-ring"
                   >
                     bilal.arshad2@mail.bcu.ac.uk
                   </a>
@@ -124,15 +124,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </div>
 
-            <div className="border-t border-[var(--color-border)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-xs text-[var(--color-muted)] text-center sm:text-left">
-                © 2026 BCUComputingSoc
-              </span>
+            <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[13px]">
+              <span>© {new Date().getFullYear()} BCU Computing Society</span>
               <a
                 href="https://www.keystonedigitalstrategy.co.uk"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
+                className="hover:text-white transition-colors rounded focus-ring"
               >
                 Made by Keystone
               </a>

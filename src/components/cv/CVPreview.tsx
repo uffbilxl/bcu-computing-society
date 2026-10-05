@@ -150,7 +150,7 @@ export function CVPreview({
                 onClick={() => { onApplyVerb(section, entryId, bulletIdx, v); setOpenKey(null) }}
                 style={{
                   fontSize: 11, padding: '3px 9px', borderRadius: 999,
-                  border: '1px solid rgba(99,102,241,0.4)', background: 'rgba(99,102,241,0.12)',
+                  border: '1px solid rgba(59,130,246,0.4)', background: 'rgba(59,130,246,0.12)',
                   color: '#a5a7f7', cursor: 'pointer',
                 }}
               >

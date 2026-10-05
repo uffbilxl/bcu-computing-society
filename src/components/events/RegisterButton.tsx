@@ -4,10 +4,14 @@ interface Props {
   disabled: boolean
   registrationUrl: string | null
 }
-export function RegisterButton({ eventId, disabled, registrationUrl }: Props) {
+
+/* Three states: full, a real registration link, or no link yet. The last
+ * used to be a button that fired alert(); it now says so in place instead
+ * of pretending to be an action. */
+export function RegisterButton({ disabled, registrationUrl }: Props) {
   if (disabled) {
     return (
-      <button disabled className="px-3 py-1.5 bg-[var(--bg3)] text-[var(--t4)] text-[11px] font-medium cursor-not-allowed">
+      <button disabled className="btn-sm btn-ghost" aria-disabled="true">
         Full
       </button>
     )
@@ -18,18 +22,16 @@ export function RegisterButton({ eventId, disabled, registrationUrl }: Props) {
         href={registrationUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="px-3 py-1.5 bg-[var(--t1)] text-[var(--bg)] text-[11px] font-medium hover:opacity-80 transition-opacity"
+        className="btn-sm btn-primary focus-ring"
       >
         Register
+        <span className="sr-only">(opens in a new tab)</span>
       </a>
     )
   }
   return (
-    <button
-      onClick={() => alert('Registration will be available soon. Check back later.')}
-      className="px-3 py-1.5 bg-[var(--t1)] text-[var(--bg)] text-[11px] font-medium hover:opacity-80 transition-opacity"
-    >
-      Register
-    </button>
+    <span className="text-[13px] text-[var(--color-muted)] whitespace-nowrap">
+      Registration opens soon
+    </span>
   )
 }

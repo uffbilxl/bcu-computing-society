@@ -7,12 +7,11 @@ export const revalidate = 300
 
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
-import { OpportunityCard } from '@/components/opportunities/OpportunityCard'
+import { FeaturedGrid } from '@/components/home/FeaturedGrid'
 import { TickerBanner } from '@/components/home/TickerBanner'
 import { HeroContent } from '@/components/home/HeroContent'
-import { StatsStrip } from '@/components/home/StatsStrip'
-import { FadeIn } from '@/components/ui/FadeIn'
 import { prominenceScore } from '@/lib/companyRanking'
+import { openDeadlineFloor } from '@/lib/time'
 import {
   Briefcase,
   Calendar,
@@ -33,7 +32,7 @@ async function getHomeData() {
     return await queryHomeData()
   } catch (err) {
     console.error('[home] prerender query failed, shipping empty and revalidating later:', err)
-    return { featured: [] } as Awaited<ReturnType<typeof queryHomeData>>
+    return { featured: [], liveCount: 0, closingSoon: [] } as Awaited<ReturnType<typeof queryHomeData>>
   }
 }
 
@@ -50,7 +49,7 @@ async function queryHomeData() {
      * boosts ranking (see prominenceScore below) instead of gating entry. */
     where: {
       status: { not: 'CLOSED' },
-      OR: [{ deadline: null }, { deadline: { gte: new Date() } }],
+      OR: [{ deadline: null }, { deadline: { gte: openDeadlineFloor() } }],
     },
     include: {
       company: true,
@@ -83,38 +82,51 @@ async function queryHomeData() {
     round++
   }
 
-  return { featured }
+  /* Next deadlines for the hero panel: soonest first, six weeks out at
+   * most so the panel never pads itself with distant dates. */
+  const horizon = Date.now() + 42 * 24 * 60 * 60 * 1000
+  const closingSoon = all
+    .filter(o => o.deadline && +o.deadline <= horizon)
+    .sort((a, b) => +a.deadline! - +b.deadline!)
+    .slice(0, 5)
+    .map(o => ({
+      id: o.id,
+      title: o.title,
+      slug: o.slug,
+      applyUrl: o.applyUrl,
+      deadline: o.deadline!,
+      company: { name: o.company.name, logo: o.company.logo },
+    }))
+
+  return { featured, liveCount: all.length, closingSoon }
 }
 
 /* ── Section utilities ────────────────────────────────────────── */
-const SECTION_PAD = 'py-24 sm:py-32'
-const INNER       = 'max-w-[1080px] mx-auto px-6 sm:px-10'
+const SECTION = 'py-20 sm:py-24'
+const INNER   = 'max-w-[1200px] mx-auto px-5 sm:px-8'
 
 /* ── Data ─────────────────────────────────────────────────────── */
 const strands = [
-  { label: 'Opportunities',      desc: 'Internships, placements & graduate roles',   href: '/opportunities',              Icon: Briefcase },
-  { label: 'Events',             desc: 'Workshops, panels & networking nights',       href: '/events',                     Icon: Calendar },
-  { label: 'Resources',          desc: 'CV templates, cover letters & guides',        href: '/resources',                  Icon: BookOpen },
+  { label: 'Opportunities',      desc: 'Internships, placements & graduate roles',   href: '/opportunities',                  Icon: Briefcase },
+  { label: 'Events',             desc: 'Workshops, panels & networking nights',       href: '/events',                         Icon: Calendar },
+  { label: 'Resources',          desc: 'CV templates, cover letters & guides',        href: '/resources',                      Icon: BookOpen },
   { label: 'Graduate Roles',     desc: 'Life after university starts here',           href: '/opportunities?type=GRADUATE',    Icon: GraduationCap },
   { label: 'Spring Weeks',       desc: 'First & second year programmes',              href: '/opportunities?type=SPRING_WEEK', Icon: Zap },
-  { label: 'Meet the Committee', desc: 'The people behind the BCUComputingSoc',                  href: '/committee',                  Icon: Users },
+  { label: 'Meet the Committee', desc: 'The people behind the BCU Computing Society', href: '/committee',                      Icon: Users },
 ]
 
 const pillars = [
   {
-    num: '01',
     title: 'Opportunities',
     body: 'Internships, placements, grad schemes and spring weeks, filtered for BCU computing students. No noise, no irrelevant listings.',
     Icon: Briefcase,
   },
   {
-    num: '02',
     title: 'Events & Community',
     body: 'Industry panels, workshops, hackathons and networking events. Build real connections alongside your degree.',
     Icon: Calendar,
   },
   {
-    num: '03',
     title: 'Career Support',
     body: 'CV templates, cover letter guides, and peer insights from BCU students who have already landed the role.',
     Icon: FileText,
@@ -123,268 +135,162 @@ const pillars = [
 
 /* ── Page ─────────────────────────────────────────────────────── */
 export default async function HomePage() {
-  const { featured } = await getHomeData()
+  const { featured, liveCount, closingSoon } = await getHomeData()
 
   return (
-    <div style={{ background: 'var(--color-bg)' }}>
+    <div>
+      <HeroContent liveCount={liveCount} closingSoon={closingSoon} />
 
-      {/* ── Hero ──────────────────────────────────────────────── */}
-      <HeroContent />
-
-      {/* ── Stats strip ───────────────────────────────────────── */}
-      <StatsStrip />
-
-      {/* ── Ticker ────────────────────────────────────────────── */}
       <TickerBanner />
 
-      {/* ── Featured Opportunities ────────────────────────────── */}
-      <section
-        className={`${SECTION_PAD} section-divider`}
-        style={{
-          background: 'var(--section-gradient-a)',
-        }}
-      >
+      {/* ── Featured opportunities ─────────────────────────────── */}
+      <section className={SECTION}>
         <div className={INNER}>
-
-          {/* Section header */}
-          <FadeIn>
-            <div className="flex items-end justify-between mb-14">
-              <div>
-                <span className="eyebrow block mb-4">Handpicked</span>
-                <h2
-                  className="display-headline"
-                  style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)' }}
-                >
-                  Featured Opportunities
-                </h2>
-              </div>
-              <Link
-                href="/opportunities"
-                className="hidden sm:flex items-center gap-1.5 text-[var(--color-accent)] font-medium transition-opacity hover:opacity-70 focus-ring rounded-md"
-                style={{ fontSize: '0.9375rem' }}
-              >
-                View all
-                <ArrowRight size={15} aria-hidden="true" />
-              </Link>
+          <div className="reveal flex items-end justify-between gap-6 mb-8">
+            <div>
+              <h2 className="display-headline text-[28px] sm:text-[36px]">Featured opportunities</h2>
+              <p className="mt-2 text-[15px] text-[var(--color-muted)]">
+                A spread of internships, placements, graduate roles and spring weeks open now.
+              </p>
             </div>
-          </FadeIn>
+            <Link href="/opportunities" className="btn-ghost hidden sm:inline-flex focus-ring">
+              View all
+              <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
 
           {featured.length > 0 ? (
-            <FadeIn delay={0.08}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {featured.map(opp => (
-                  <OpportunityCard key={opp.id} opportunity={opp as any} showFeaturedBadge />
-                ))}
-              </div>
-            </FadeIn>
+            <FeaturedGrid opportunities={featured as any} />
           ) : (
-            <FadeIn delay={0.08}>
-              <div
-                className="rounded-2xl py-20 text-center section-divider"
-                style={{ background: 'var(--color-surface)' }}
-              >
-                <p className="text-sm text-[var(--color-muted)]">No featured opportunities yet.</p>
-              </div>
-            </FadeIn>
+            <div className="card py-16 px-6 text-center">
+              <p className="text-[15px] font-medium text-[var(--color-text)]">Nothing featured right now</p>
+              <p className="mt-1 text-sm text-[var(--color-muted)]">
+                New roles are added twice a day. Browse every open listing in the meantime.
+              </p>
+              <Link href="/opportunities" className="btn-primary mt-5 focus-ring">Browse opportunities</Link>
+            </div>
           )}
+
+          <Link href="/opportunities" className="btn-ghost w-full mt-4 sm:hidden focus-ring">
+            View all opportunities
+            <ArrowRight size={15} aria-hidden="true" />
+          </Link>
         </div>
       </section>
 
-      {/* ── Three pillars ─────────────────────────────────────── */}
-      <section
-        className={`${SECTION_PAD} section-divider`}
-        style={{
-          background: 'var(--section-gradient-b)',
-        }}
-      >
-        <div className={INNER}>
-          <FadeIn>
-            <div className="mb-16">
-              <span className="eyebrow block mb-4">What we offer</span>
-              <h2
-                className="display-headline max-w-lg"
-                style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)' }}
-              >
-                Everything a BCU computing student needs.
-              </h2>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px"
-            style={{ background: 'rgba(var(--hairline-rgb),0.06)' }}>
-            {pillars.map(({ num, title, body, Icon }, i) => (
-              <FadeIn key={title} delay={i * 0.1} className="h-full">
-                <div
-                  className="flex flex-col gap-5 p-8 sm:p-10 h-full"
-                  style={{ background: 'var(--card-gradient)' }}
-                >
-                  {/* Muted number */}
-                  <span
-                    className="font-bold tabular-nums leading-none"
-                    style={{
-                      fontSize: '3.5rem',
-                      color: 'var(--color-border)',
-                      fontFamily: '-apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif',
-                      letterSpacing: '-0.04em',
-                    }}
-                  >
-                    {num}
-                  </span>
-
-                  {/* Icon */}
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{
-                      background: 'var(--color-accent-dim)',
-                      color: 'var(--color-accent)',
-                    }}
-                  >
-                    <Icon size={18} aria-hidden="true" />
-                  </div>
-
-                  <div>
-                    <h3
-                      className="font-semibold text-[var(--color-text)] mb-2"
-                      style={{ fontSize: '1.125rem' }}
-                    >
-                      {title}
-                    </h3>
-                    <p className="text-sm text-[var(--color-muted)] leading-relaxed">{body}</p>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Where to start — navigation grid ─────────────────── */}
-      <section
-        className={`${SECTION_PAD} section-divider`}
-        style={{
-          background: 'var(--section-gradient-c)',
-        }}
-      >
-        <div className={INNER}>
-          <FadeIn>
-            <div className="mb-14">
-              <span className="eyebrow block mb-4">Explore</span>
-              <h2
-                className="display-headline"
-                style={{ fontSize: 'clamp(2rem, 5vw, 3.25rem)' }}
-              >
-                Where do you want to start?
-              </h2>
-            </div>
-          </FadeIn>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {strands.map(({ label, desc, href, Icon }, i) => (
-              <FadeIn key={label} delay={i * 0.05}>
-                <Link
-                  href={href}
-                  className="group flex items-start justify-between p-6 rounded-2xl border border-[rgba(var(--hairline-rgb),0.07)] hover:border-[rgba(99,102,241,0.3)] transition-all duration-300 focus-ring"
-                  style={{
-                    background: 'var(--card-gradient)',
-                    transitionTimingFunction: 'cubic-bezier(0.25,0.46,0.45,0.94)',
-                  }}
-                >
-                  <div className="flex-1">
-                    <div
-                      className="w-9 h-9 rounded-xl flex items-center justify-center mb-4 transition-colors"
-                      style={{
-                        background: 'var(--color-surface-2)',
-                        color: 'var(--color-muted)',
-                      }}
-                    >
-                      <Icon size={16} aria-hidden="true" />
-                    </div>
-                    <div
-                      className="font-semibold text-[var(--color-text)] mb-1.5 group-hover:text-white transition-colors"
-                      style={{ fontSize: '0.9375rem' }}
-                    >
-                      {label}
-                    </div>
-                    <div className="text-xs text-[var(--color-muted)] leading-relaxed">{desc}</div>
-                  </div>
-                  <ArrowRight
-                    size={15}
-                    className="text-[var(--color-muted-2)] group-hover:text-[var(--color-muted)] group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0 ml-4 mt-0.5"
-                    aria-hidden="true"
-                  />
-                </Link>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Join CTA ──────────────────────────────────────────── */}
-      <section
-        className="section-divider relative overflow-hidden"
-        style={{
-          background: 'var(--section-gradient-d)',
-        }}
-      >
-        {/* Strong indigo glow from bottom-center */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          aria-hidden="true"
-          style={{
-            background:
-              'radial-gradient(ellipse 70% 60% at 50% 110%, rgba(99,102,241,0.2) 0%, rgba(99,102,241,0.05) 50%, transparent 70%)',
-          }}
-        />
-        {/* Purple accent — top-right corner */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          aria-hidden="true"
-          style={{
-            background:
-              'radial-gradient(ellipse 40% 40% at 95% 0%, rgba(168,85,247,0.12) 0%, transparent 60%)',
-          }}
-        />
-
-        <div className={`${SECTION_PAD} ${INNER} relative z-10 text-center`}>
-          <FadeIn>
-            <span className="eyebrow block mb-6">Join the community</span>
-            <h2
-              className="display-headline mx-auto mb-5"
-              style={{
-                fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
-                maxWidth: '640px',
-              }}
-            >
-              You belong here.
+      {/* ── What we offer ──────────────────────────────────────── */}
+      <section className={`${SECTION} section-divider`} style={{ background: 'var(--color-surface)' }}>
+        <div className={`${INNER} grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-20`}>
+          <div className="reveal">
+            <h2 className="display-headline text-[28px] sm:text-[40px] max-w-[16ch]">
+              Everything a BCU computing student needs.
             </h2>
-            <p
-              className="text-[var(--color-muted)] mx-auto mb-10 leading-relaxed"
-              style={{ fontSize: '1.125rem', maxWidth: '460px' }}
-            >
-              Whether you're in your first year or finishing your degree, the
-              BCUComputingSoc is built to support every step of your journey.
+            <p className="mt-4 text-[16px] leading-relaxed text-[var(--color-muted)] max-w-[44ch]">
+              Run by students, for students: the roles, the events and the support to get from first year to first job.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link
-                href="/opportunities"
-                className="btn-gradient inline-flex items-center gap-2 px-8 py-3.5 rounded-full focus-ring"
-                style={{ fontSize: '0.9375rem' }}
+          </div>
+
+          <ul className="flex flex-col">
+            {pillars.map(({ title, body, Icon }, i) => (
+              <li
+                key={title}
+                style={{ '--i': i } as React.CSSProperties}
+                className={`reveal flex gap-5 py-6 ${i > 0 ? 'border-t border-[var(--color-border-subtle)]' : 'pt-0 lg:pt-2'}`}
               >
-                Browse opportunities
-                <ArrowRight size={15} aria-hidden="true" />
-              </Link>
-              <Link
-                href="/events"
-                className="inline-flex items-center gap-2 px-8 py-3.5 text-[var(--color-text)] font-medium rounded-full border border-[var(--color-border)] hover:border-[var(--b2)] hover:bg-[var(--color-surface)] transition-all duration-200 focus-ring"
-                style={{ fontSize: '0.9375rem' }}
-              >
-                See events
-              </Link>
-            </div>
-          </FadeIn>
+                <span
+                  className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'var(--color-accent-dim)', color: 'var(--color-accent-text)' }}
+                >
+                  <Icon size={20} aria-hidden="true" />
+                </span>
+                <div>
+                  <h3 className="text-[18px] font-semibold text-[var(--color-text)]">{title}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-[var(--color-muted)] max-w-[56ch]">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
+      {/* ── Where to start ─────────────────────────────────────── */}
+      <section className={`${SECTION} section-divider`}>
+        <div className={INNER}>
+          <h2 className="reveal display-headline text-[28px] sm:text-[36px] mb-8">Where do you want to start?</h2>
+
+          <nav
+            aria-label="Explore the site"
+            className="reveal card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 overflow-hidden"
+          >
+            {strands.map(({ label, desc, href, Icon }, i) => (
+              <Link
+                key={label}
+                href={href}
+                className={`group flex items-center gap-4 p-5 sm:p-6 transition-colors duration-150 hover:bg-[var(--color-surface-hover)] focus-ring
+                  border-[var(--color-border-subtle)]
+                  ${i > 0 ? 'border-t' : ''}
+                  ${i === 1 ? 'sm:border-t-0' : ''}
+                  ${i === 2 ? 'lg:border-t-0' : ''}
+                  ${i % 2 === 1 ? 'sm:border-l lg:border-l-0' : ''}
+                  ${i % 3 !== 0 ? 'lg:border-l' : ''}`}
+              >
+                <span
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-150"
+                  style={{ background: 'var(--color-surface-2)', color: 'var(--color-accent-text)' }}
+                >
+                  <Icon size={18} aria-hidden="true" />
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-[15px] font-semibold text-[var(--color-text)]">{label}</span>
+                  <span className="block text-[13px] text-[var(--color-muted)] mt-0.5">{desc}</span>
+                </span>
+                <ArrowRight
+                  size={16}
+                  className="text-[var(--color-muted-2)] group-hover:text-[var(--color-text)] group-hover:translate-x-0.5 transition-all duration-150 flex-shrink-0"
+                  aria-hidden="true"
+                />
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </section>
+
+      {/* ── Join CTA ───────────────────────────────────────────── */}
+      <section className="pb-20 sm:pb-24">
+        <div className={INNER}>
+          <div
+            className="reveal relative overflow-hidden rounded-3xl border border-white/10 px-6 py-14 sm:px-14 sm:py-20 text-center"
+            style={{ background: 'var(--navy)' }}
+          >
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-[15%] glow-drift"
+              style={{ background: 'radial-gradient(50% 60% at 50% 105%, rgba(59,130,246,0.26) 0%, transparent 70%)' }}
+            />
+            <div className="relative">
+              <h2
+                className="font-bold text-white mx-auto"
+                style={{ fontSize: 'clamp(2.25rem, 1.5rem + 3vw, 3.5rem)', letterSpacing: '-0.035em', lineHeight: 1.05 }}
+              >
+                You belong here.
+              </h2>
+              <p className="mt-5 mx-auto max-w-[48ch] text-[17px] leading-relaxed text-[#A3B1C6]">
+                Whether you&apos;re in your first year or finishing your degree, the
+                BCU Computing Society is built to support every step of your journey.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link href="/opportunities" className="btn-primary btn-lg w-full sm:w-auto focus-ring">
+                  Browse opportunities
+                  <ArrowRight size={16} aria-hidden="true" />
+                </Link>
+                <Link href="/events" className="btn-on-navy btn-lg w-full sm:w-auto focus-ring">
+                  See events
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

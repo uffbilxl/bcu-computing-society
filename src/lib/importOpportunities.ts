@@ -1,4 +1,5 @@
 import { prisma } from './prisma'
+import { openDeadlineFloor } from './time'
 import type { OpportunityType, WorkMode, Status } from '@prisma/client'
 
 /* Core "structured rows → DB" logic, shared by:
@@ -318,7 +319,8 @@ export async function importOpportunityRows(
   // covered that opportunity's source at all) — a passed deadline means
   // it's over regardless of what the scrape did or didn't find today.
   const expired = await prisma.opportunity.updateMany({
-    where: { status: { not: 'CLOSED' }, deadline: { lt: new Date() } },
+    // Calendar-day comparison: a role is open all of its deadline day.
+    where: { status: { not: 'CLOSED' }, deadline: { lt: openDeadlineFloor() } },
     data: { status: 'CLOSED' },
   })
   results.closed += expired.count

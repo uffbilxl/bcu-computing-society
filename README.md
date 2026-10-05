@@ -4,15 +4,15 @@
 
 From your first lecture to your first offer.
 
-The society's website, live at **[bcusca.org](https://bcusca.org)**. It brings together everything a BCU computing student needs in one place:
+The society's website, live at **[bcucompsoc.com](https://bcucompsoc.com)**. It brings together everything a BCU computing student needs in one place:
 
-- **Opportunities**: spring weeks, summer internships, placements and graduate roles, refreshed twice a day ([/opportunities](https://bcusca.org/opportunities))
-- **Internal roles**: positions within the society itself ([/sca-opportunities](https://bcusca.org/sca-opportunities))
-- **Events**: upcoming and past events, in a calendar or list ([/events](https://bcusca.org/events))
-- **Committee**: who runs the society, and how to join it ([/committee](https://bcusca.org/committee))
-- **Research**: papers written by society members ([/research](https://bcusca.org/research))
-- **CV builder**: fill in your education, experience, skills and interests, then download a clean, ATS-friendly CV in one click ([/cv-builder](https://bcusca.org/cv-builder))
-- **Resources**: CV and cover letter templates and programming cheat sheets, downloadable as PDF or Word ([/resources](https://bcusca.org/resources))
+- **Opportunities**: spring weeks, summer internships, placements and graduate roles, refreshed twice a day ([/opportunities](https://bcucompsoc.com/opportunities))
+- **Internal roles**: positions within the society itself ([/sca-opportunities](https://bcucompsoc.com/sca-opportunities))
+- **Events**: upcoming and past events, in a calendar or list ([/events](https://bcucompsoc.com/events))
+- **Committee**: who runs the society, and how to join it ([/committee](https://bcucompsoc.com/committee))
+- **Research**: papers written by society members ([/research](https://bcucompsoc.com/research))
+- **CV builder**: fill in your education, experience, skills and interests, then download a clean, ATS-friendly CV in one click ([/cv-builder](https://bcucompsoc.com/cv-builder))
+- **Resources**: CV and cover letter templates and programming cheat sheets, downloadable as PDF or Word ([/resources](https://bcucompsoc.com/resources))
 - **Project marketplace**: students list a project with its scope, tech stack, roadmap and the team it needs; others filter by their skills and apply. Project owners accept applicants, assign roles and coordinate over real-time project chat ([sca-project-finder.vercel.app](https://sca-project-finder.vercel.app/))
 
 Follow us on [LinkedIn](https://uk.linkedin.com/company/bcu-computing-society) and [Instagram](https://www.instagram.com/bcucompsoc).

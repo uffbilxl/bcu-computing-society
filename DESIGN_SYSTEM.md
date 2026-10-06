@@ -60,5 +60,5 @@ Avoid scroll-triggered reveals that start hidden and rely on JavaScript to show 
 
 - Content width: 1200px for wide pages, 960–1040px for reading pages, with `px-5 sm:px-8` gutters.
 - Section rhythm: `py-20 sm:py-24`.
-- Full navigation from 1024px; below that, the menu button.
+- Full navigation from 1280px; below that, the menu button. The CV Builder button shows in the bar at every width.
 - Layering uses the `--z-*` scale (sticky, dropdown, overlay, modal, toast).

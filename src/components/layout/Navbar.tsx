@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, FileText, FolderOpen, Rocket, ArrowUpRight, Menu, X, Linkedin } from 'lucide-react'
+import { ChevronDown, FileText, FolderOpen, Rocket, ArrowUpRight, ArrowRight, Menu, X, Linkedin } from 'lucide-react'
 import { ThemeToggle } from '@/components/layout/ThemeToggle'
 import { Wordmark } from '@/components/ui/Wordmark'
 
@@ -20,8 +20,11 @@ const navLinksAfterResources = [
   { href: '/about', label: 'About' },
 ]
 
+/* The CV Builder is the society's most-used tool, so it gets its own button
+ * in the bar rather than sitting inside the Resources dropdown. */
+const CV_HREF = '/cv-builder'
+
 const resourceLinks = [
-  { href: '/cv-builder', label: 'CV Builder', desc: 'Build and download your CV', Icon: FileText, external: false },
   { href: '/resources',  label: 'Documents',  desc: 'Templates, guides and cheat sheets', Icon: FolderOpen, external: false },
   { href: 'https://sca-project-finder.vercel.app/', label: 'Project Marketplace', desc: 'Find and join student project teams', Icon: Rocket, external: true },
 ]
@@ -30,6 +33,28 @@ const JOIN_URL = 'https://uk.linkedin.com/company/bcu-computing-society'
 
 function isActive(pathname: string, href: string) {
   return pathname === href || (href !== '/' && pathname.startsWith(href))
+}
+
+function CVButton({ pathname, className = '' }: { pathname: string; className?: string }) {
+  const active = isActive(pathname, CV_HREF)
+  return (
+    <Link
+      href={CV_HREF}
+      aria-label="CV Builder"
+      aria-current={active ? 'page' : undefined}
+      className={`inline-flex items-center gap-1.5 h-9 px-3 rounded-lg text-[14px] font-semibold whitespace-nowrap border transition-colors duration-150 focus-ring ${className}`}
+      style={{
+        background: 'var(--color-accent-dim)',
+        color: 'var(--color-accent-text)',
+        borderColor: active ? 'var(--color-accent-text)' : 'transparent',
+      }}
+    >
+      <FileText size={15} aria-hidden="true" />
+      {/* Short label on phones so the bar fits beside the wordmark */}
+      <span className="sm:hidden">CV</span>
+      <span className="hidden sm:inline">CV Builder</span>
+    </Link>
+  )
 }
 
 const linkBase =
@@ -192,21 +217,25 @@ export function Navbar() {
           </Link>
 
           {/* Desktop links */}
-          <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
-            {navLinks.map(link => <NavLink key={link.href} {...link} pathname={pathname} />)}
+          <div className="hidden xl:flex items-center gap-0.5 flex-1 justify-center">
+            {/* No Home link here: the wordmark already goes home, and the
+                room is needed for the CV Builder button. */}
+            {navLinks.filter(l => l.href !== '/').map(link => <NavLink key={link.href} {...link} pathname={pathname} />)}
             <ResourcesDropdown pathname={pathname} />
             {navLinksAfterResources.map(link => <NavLink key={link.href} {...link} pathname={pathname} />)}
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <div className="hidden xl:flex items-center gap-2 flex-shrink-0">
             <ThemeToggle className={toggleClass} />
+            <CVButton pathname={pathname} className="hover:brightness-110" />
             <a href={JOIN_URL} target="_blank" rel="noopener noreferrer" className="btn-primary h-9 focus-ring">
               Join the society
             </a>
           </div>
 
           {/* Compact: theme + menu */}
-          <div className="flex lg:hidden items-center gap-2 ml-auto">
+          <div className="flex xl:hidden items-center gap-2 ml-auto">
+            <CVButton pathname={pathname} className="hidden min-[360px]:inline-flex" />
             <ThemeToggle className={toggleClass} />
             <button
               onClick={() => setMobileOpen(o => !o)}
@@ -229,10 +258,29 @@ export function Navbar() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8, transition: { duration: 0.14 } }}
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-16 inset-x-0 bottom-0 lg:hidden overflow-y-auto"
+          className="fixed top-16 inset-x-0 bottom-0 xl:hidden overflow-y-auto"
           style={{ zIndex: 'var(--z-overlay)' as unknown as number, background: 'var(--mobile-menu-bg)' }}
         >
           <div className="max-w-[1200px] mx-auto px-5 sm:px-8 py-4 flex flex-col">
+            <Link
+              href={CV_HREF}
+              aria-current={isActive(pathname, CV_HREF) ? 'page' : undefined}
+              className="fade-in flex items-center gap-3 p-3 mb-3 rounded-xl border transition-colors hover:bg-[var(--color-surface-hover)]"
+              style={{ borderColor: 'var(--color-border)', background: 'var(--color-accent-dim)' }}
+            >
+              <span
+                className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 text-white"
+                style={{ background: 'var(--color-accent)' }}
+              >
+                <FileText size={18} aria-hidden="true" />
+              </span>
+              <span className="flex flex-col min-w-0 flex-1">
+                <span className="text-[16px] font-semibold text-[var(--color-text)]">CV Builder</span>
+                <span className="text-[13px] text-[var(--color-muted)]">Build and download your CV in minutes</span>
+              </span>
+              <ArrowRight size={16} className="text-[var(--color-accent-text)] flex-shrink-0" aria-hidden="true" />
+            </Link>
+
             {[...navLinks, ...navLinksAfterResources].map((link, i) => {
               const active = isActive(pathname, link.href)
               return (

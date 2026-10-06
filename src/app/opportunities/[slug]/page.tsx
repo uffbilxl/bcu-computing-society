@@ -134,8 +134,8 @@ export default async function OpportunityDetailPage({ params }: Props) {
       </header>
 
       {/* Body */}
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10">
-        <div className="grid gap-9 content-start">
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-10">
+        <div className="grid grid-cols-1 gap-9 content-start min-w-0">
           <section>
             <h2 className="text-[18px] font-semibold text-[var(--color-text)] mb-3">About the role</h2>
             <p className="text-[15px] text-[var(--color-muted)] leading-relaxed whitespace-pre-line max-w-[68ch]">{opp.description}</p>
@@ -165,7 +165,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
           )}
         </div>
 
-        <aside className="grid gap-4 content-start">
+        <aside className="grid grid-cols-1 gap-4 content-start min-w-0">
           <div className="card p-5">
             <h2 className="text-[15px] font-semibold text-[var(--color-text)] mb-2">Overview</h2>
             <dl>

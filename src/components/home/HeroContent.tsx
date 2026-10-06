@@ -61,7 +61,7 @@ export function HeroContent({
         }}
       />
 
-      <div className="relative max-w-[1200px] mx-auto px-5 sm:px-8 pt-14 pb-16 sm:pt-20 sm:pb-24 grid lg:grid-cols-[1.15fr_1fr] gap-12 lg:gap-16 items-center">
+      <div className="relative max-w-[1200px] mx-auto px-5 sm:px-8 pt-14 pb-16 sm:pt-20 sm:pb-24 grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-12 lg:gap-16 items-center">
         <div>
           <p
             className="enter inline-flex items-center gap-2 h-8 px-3 rounded-full border border-white/15 bg-white/[0.04] text-[13px] font-medium text-[#C4CEDC]"

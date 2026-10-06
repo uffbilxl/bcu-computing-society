@@ -180,7 +180,7 @@ export default async function HomePage() {
 
       {/* ── What we offer ──────────────────────────────────────── */}
       <section className={`${SECTION} section-divider`} style={{ background: 'var(--color-surface)' }}>
-        <div className={`${INNER} grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-20`}>
+        <div className={`${INNER} grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] gap-10 lg:gap-20`}>
           <div className="reveal">
             <h2 className="display-headline text-[28px] sm:text-[40px] max-w-[16ch]">
               Everything a BCU computing student needs.

@@ -64,7 +64,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             own colours, so its text uses fixed on-navy values. */}
         <footer style={{ background: 'var(--footer-gradient)' }} className="text-[#A3B1C6]">
           <div className="max-w-[1200px] mx-auto px-5 sm:px-8 pt-14 pb-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] gap-10 pb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-10 pb-12">
 
               <div>
                 <Link href="/" className="inline-block rounded-md focus-ring" aria-label="BCU Computing Society home">

@@ -186,6 +186,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* No sideways scroll on phones. clip, not hidden, so the sticky nav
+     still works (hidden would make body a scroll container). */
+  overflow-x: clip;
 }
 
 h1, h2, h3 { text-wrap: balance; }

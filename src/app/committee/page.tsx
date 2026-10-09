@@ -116,6 +116,7 @@ const COMMITTEE: Person[] = [
   {
     id: 'ivan-khan', name: 'Ivan Khan',
     linkedin: 'https://www.linkedin.com/in/ivan-k-036007387/',
+    website: 'https://ivancyber.uk',
     roles: [
       { group: 'cyber', title: 'Head of Cyber Security', lead: true },
       { group: 'platforms', title: 'Web & App Dev' },

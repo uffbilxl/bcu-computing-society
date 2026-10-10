@@ -130,6 +130,7 @@ const COMMITTEE: Person[] = [
   {
     id: 'arsalan-abid', name: 'Arsalan Abid',
     linkedin: 'https://www.linkedin.com/in/arsalan-fareed-abid-a9275a250/',
+    website: 'https://www.arsalanfareedabid.com',
     roles: [{ group: 'cyber', title: 'Coordinator' }],
   },
 
@@ -179,6 +180,7 @@ const COMMITTEE: Person[] = [
   {
     id: 'muhammad-hamza-rafeh', name: 'Muhammad Hamza Rafeh',
     linkedin: 'https://www.linkedin.com/in/muhammad-hamza-rafeh-7b377132b/',
+    website: 'https://muhammadhamzarafeh.com',
     roles: [{ group: 'compsci', title: 'Event Coordinator' }],
   },
 

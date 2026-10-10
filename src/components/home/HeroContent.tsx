@@ -97,7 +97,7 @@ export function HeroContent({
 
           <dl className="enter mt-10 flex flex-wrap gap-x-8 gap-y-3 text-[14px]" style={{ '--i': 4 } as React.CSSProperties}>
             {[
-              ['6', 'specialist divisions'],
+              ['5', 'divisions'],
               ['Free', 'for BCU students'],
             ].map(([value, label]) => (
               <div key={label} className="flex items-baseline gap-1.5">

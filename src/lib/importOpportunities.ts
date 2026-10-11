@@ -19,9 +19,10 @@ const DEFENCE_BLOCKLIST = new Set([
   'thales', 'saab', 'rheinmetall', 'elbit systems',
   'rafael', 'airbus defence', 'airbus defence and space',
   'serco', 'leidos', 'saic', 'dyncorp', 'mantech',
-  'rolls-royce defence', 'cobham', 'ultra intelligence',
+  'rolls-royce', 'cobham', 'ultra intelligence',
   'chemring', 'meggitt', 'avon protection', 'babcock',
   'cern', // nuclear/particle-physics research — excluded per site policy
+  'palantir', // excluded per site policy
 ])
 
 /* Exact-set matching let every naming variant straight through: the list has
@@ -34,9 +35,9 @@ const DEFENCE_BLOCKLIST = new Set([
  * positives a plain substring test would cause — "Cerner" does not start with
  * the word "cern", though it does contain it as a substring.
  *
- * Prefix matching also keeps the list's existing intent for partial entries:
- * "rolls-royce defence" still requires that third word, so plain "Rolls-Royce"
- * (civil aerospace and power systems) stays allowed. */
+ * Hyphens normalise to spaces, so "rolls-royce" also catches "Rolls Royce",
+ * "Rolls-Royce plc" and "Rolls-Royce SMR"; "palantir" catches "Palantir
+ * Technologies". Rolls-Royce is blocked outright, not just its defence arm. */
 function normaliseCompany(name: string): string[] {
   const words = name
     .toLowerCase()

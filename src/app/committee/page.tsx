@@ -1,213 +1,175 @@
-'use client'
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { motion, AnimatePresence, MotionConfig, useReducedMotion } from 'framer-motion'
-import { Globe, Mail, ArrowUpRight } from 'lucide-react'
+import { Globe, Mail, ArrowRight, ArrowUpRight } from 'lucide-react'
 
-/* ── Types ─────────────────────────────────────────────────── */
-type GroupId =
-  | 'leadership' | 'software' | 'cyber' | 'ai'
-  | 'compsci' | 'platforms' | 'research'
-
-interface Group {
-  id: GroupId
-  label: string
-  short?: string
-  color: string
-  kind: 'core' | 'department' | 'team'
+export const metadata: Metadata = {
+  title: 'Committee - BCUComputingSoc',
+  description: 'The students who run the BCU Computing Society.',
 }
 
-interface Role {
-  group: GroupId
-  title: string
-  lead?: boolean
-}
-
+/* ── People ────────────────────────────────────────────────────
+   Each person once, with every role they hold. The sections below
+   pick people out by id, so someone in two places has one record.
+   ──────────────────────────────────────────────────────────── */
 interface Person {
-  id: string
   name: string
-  roles: Role[]
+  roles: string[]
   linkedin?: string
   website?: string
   email?: string
-  vacant?: boolean
 }
 
-/* ── Groups ────────────────────────────────────────────────────
-   Colour is an identifier here, never body text: it rides on dots,
-   avatar rings and glows so contrast stays token-driven in both themes.
-   ──────────────────────────────────────────────────────────── */
-const GROUPS: Group[] = [
-  { id: 'leadership', label: 'Leadership',              color: '#3B82F6', kind: 'core' },
-  { id: 'software',   label: 'Software Engineering',    short: 'Software',  color: '#22c55e', kind: 'department' },
-  { id: 'cyber',      label: 'Cyber Security',          short: 'Cyber',     color: '#ef4444', kind: 'department' },
-  { id: 'ai',         label: 'Artificial Intelligence', short: 'AI',        color: '#a855f7', kind: 'department' },
-  { id: 'compsci',    label: 'Computer Science',        short: 'Comp Sci',  color: '#f59e0b', kind: 'department' },
-  { id: 'platforms',  label: 'Technical Platforms',     short: 'Platforms', color: '#06b6d4', kind: 'team' },
-  { id: 'research',   label: 'Research & Development',  short: 'R&D',       color: '#ec4899', kind: 'team' },
-]
-
-const GROUP_BY_ID = Object.fromEntries(GROUPS.map(g => [g.id, g])) as Record<GroupId, Group>
-
-/* ── Featured leadership ──────────────────────────────────── */
-const LEADS: Person[] = [
-  {
-    id: 'bilal-arshad',
+const PEOPLE = {
+  'bilal-arshad': {
     name: 'Bilal Arshad',
+    roles: ['President'],
     linkedin: 'https://www.linkedin.com/in/bilal-arshad-4a07812b4/',
     website: 'https://bilalarshad.co.uk',
     email: 'bilal.arshad2@mail.bcu.ac.uk',
-    roles: [
-      { group: 'leadership', title: 'President', lead: true },
-      { group: 'platforms',  title: 'Web & App Dev' },
-      { group: 'research',   title: 'Researcher' },
-    ],
   },
-  {
-    id: 'haarisah-hussain',
-    name: 'Haarisah Hussain',
-    linkedin: 'https://www.linkedin.com/in/haarisah-hussain-2ba850315',
-    roles: [
-      { group: 'leadership', title: 'Vice President', lead: true },
-      { group: 'software',   title: 'Head of Software Engineering', lead: true },
-    ],
-  },
-  {
-    id: 'michael-martinak',
-    name: 'Michael Martinak',
-    linkedin: 'https://www.linkedin.com/in/profile-mmartinak/',
-    roles: [
-      { group: 'leadership', title: 'Head of Research', lead: true },
-      { group: 'cyber',      title: 'Technical Coordinator' },
-      { group: 'research',   title: 'Head of Research', lead: true },
-    ],
-  },
-]
-
-/* ── Everyone else, in structural order ────────────────────── */
-const COMMITTEE: Person[] = [
-  {
-    id: 'tayyeb-nadeem-somro',
+  'tayyeb-nadeem-somro': {
     name: 'Tayyeb Nadeem Somro',
+    roles: ['Chairman'],
     linkedin: 'https://www.linkedin.com/in/tayyeb-nadeem-somro/',
     website: 'http://tayyebns.com',
-    roles: [
-      { group: 'leadership', title: 'Chairman and Founder', lead: true },
-      { group: 'platforms',  title: 'Web & App Dev' },
-    ],
   },
-  {
-    id: 'maryam-ahmad', name: 'Maryam Ahmad',
+  'michael-martinak': {
+    name: 'Michael Martinak',
+    roles: ['Head of Research', 'Technical Coordinator'],
+    linkedin: 'https://www.linkedin.com/in/profile-mmartinak/',
+  },
+  'maryam-ahmad': {
+    name: 'Maryam Ahmad',
+    roles: ['Community Engagement'],
     linkedin: 'https://www.linkedin.com/in/maryam-a-259297235',
-    roles: [{ group: 'leadership', title: 'Community Engagement' }],
   },
-  {
-    id: 'mursal-hottak', name: 'Mursal Hottak',
-    linkedin: 'https://www.linkedin.com/in/mursal-hottak-7b8b672a1/',
-    roles: [{ group: 'leadership', title: 'Communication and Governance Lead' }],
+  'haarisah-hussain': {
+    name: 'Haarisah Hussain',
+    roles: ['Vice President', 'Head of Software Engineering'],
+    linkedin: 'https://www.linkedin.com/in/haarisah-hussain-2ba850315',
   },
-
-  {
-    id: 'saifuddin-muhammad', name: 'Saifuddin Muhammad',
+  'saifuddin-muhammad': {
+    name: 'Saifuddin Muhammad',
+    roles: ['Technical Coordinator'],
     linkedin: 'https://www.linkedin.com/in/saifty/',
-    roles: [{ group: 'software', title: 'Technical Coordinator' }],
   },
-
-  {
-    id: 'ivan-khan', name: 'Ivan Khan',
-    linkedin: 'https://www.linkedin.com/in/ivan-k-036007387/',
-    website: 'https://ivancyber.uk',
-    roles: [
-      { group: 'cyber', title: 'Head of Cyber Security', lead: true },
-      { group: 'platforms', title: 'Web & App Dev' },
-    ],
-  },
-  {
-    id: 'daeron-wallace', name: 'Daeron Wallace',
-    linkedin: 'https://www.linkedin.com/in/daeron-wallace/',
-    roles: [{ group: 'cyber', title: 'Coordinator' }],
-  },
-  {
-    id: 'arsalan-abid', name: 'Arsalan Abid',
-    linkedin: 'https://www.linkedin.com/in/arsalan-fareed-abid-a9275a250/',
-    website: 'https://www.arsalanfareedabid.com',
-    roles: [{ group: 'cyber', title: 'Coordinator' }],
-  },
-
-  {
-    id: 'mukul-sharma', name: 'Mukul Sharma',
-    linkedin: 'https://www.linkedin.com/in/mukuls27/',
-    roles: [{ group: 'ai', title: 'Head of AI', lead: true }],
-  },
-  {
-    id: 'mohamed-dahir', name: 'Mohamed Dahir',
-    linkedin: 'https://www.linkedin.com/in/m-a-dahir/',
-    roles: [{ group: 'ai', title: 'Sports Analytics Lead' }],
-  },
-  {
-    id: 'zakaria-miah', name: 'Zakaria Miah',
-    linkedin: 'https://www.linkedin.com/in/zakaria-miah/',
-    roles: [{ group: 'ai', title: 'Technical Coordinator' }],
-  },
-  {
-    id: 'orlando-igwe', name: 'Orlando Igwe',
-    linkedin: 'https://www.linkedin.com/in/orlando-igwe/',
-    roles: [{ group: 'ai', title: 'Software Engineer' }],
-  },
-  {
-    id: 'charanpreet-kaur', name: 'Charanpreet Kaur',
-    linkedin: 'https://www.linkedin.com/in/charanpreet--kaur/',
-    roles: [
-      { group: 'research', title: 'Researcher' },
-    ],
-  },
-
-  {
-    id: 'alaa-aljasem', name: "A'laa Aljasem",
-    linkedin: 'https://www.linkedin.com/in/alaa-aljasem-b816b83aa/',
-    roles: [{ group: 'compsci', title: 'Head of Computer Science', lead: true }],
-  },
-  {
-    id: 'ayaan-ahmed', name: 'Ayaan Ahmed',
-    linkedin: 'https://www.linkedin.com/in/ayaan-ahmed-477289330/',
-    roles: [{ group: 'compsci', title: 'Technical Coordinator' }],
-  },
-  {
-    id: 'jasleen-kaur', name: 'Jasleen Kaur',
-    linkedin: 'https://www.linkedin.com/in/jasleen-kaur-269367387/',
-    roles: [{ group: 'compsci', title: 'Events Coordinator' }],
-  },
-  {
-    id: 'muhammad-hamza-rafeh', name: 'Muhammad Hamza Rafeh',
-    linkedin: 'https://www.linkedin.com/in/muhammad-hamza-rafeh-7b377132b/',
-    website: 'https://muhammadhamzarafeh.com',
-    roles: [{ group: 'compsci', title: 'Event Coordinator' }],
-  },
-
-  {
-    id: 'george-james', name: 'George James',
-    linkedin: 'https://www.linkedin.com/in/georgeojames/',
-    roles: [{ group: 'research', title: 'Researcher' }],
-  },
-  {
-    id: 'baber-khan', name: 'Baber Khan',
+  'baber-khan': {
+    name: 'Baber Khan',
+    roles: ['Developer'],
     linkedin: 'https://www.linkedin.com/in/baberr/',
     website: 'https://baberr.com',
-    roles: [
-      { group: 'software', title: 'Developer' },
-      { group: 'research', title: 'Researcher' },
-    ],
   },
+  'ivan-khan': {
+    name: 'Ivan Khan',
+    roles: ['Head of Cyber Security'],
+    linkedin: 'https://www.linkedin.com/in/ivan-k-036007387/',
+    website: 'https://ivancyber.uk',
+  },
+  'daeron-wallace': {
+    name: 'Daeron Wallace',
+    roles: ['Coordinator'],
+    linkedin: 'https://www.linkedin.com/in/daeron-wallace/',
+  },
+  'arsalan-abid': {
+    name: 'Arsalan Abid',
+    roles: ['Coordinator'],
+    linkedin: 'https://www.linkedin.com/in/arsalan-fareed-abid-a9275a250/',
+    website: 'https://www.arsalanfareedabid.com',
+  },
+  'muhammad-hamza-rafeh': {
+    name: 'Muhammad Hamza Rafeh',
+    roles: ['Coordinator'],
+    linkedin: 'https://www.linkedin.com/in/muhammad-hamza-rafeh-7b377132b/',
+    website: 'https://muhammadhamzarafeh.com',
+  },
+  'mukul-sharma': {
+    name: 'Mukul Sharma',
+    roles: ['Head of AI'],
+    linkedin: 'https://www.linkedin.com/in/mukuls27/',
+  },
+  'mohamed-dahir': {
+    name: 'Mohamed Dahir',
+    roles: ['Sports Analytics Lead'],
+    linkedin: 'https://www.linkedin.com/in/m-a-dahir/',
+  },
+  'ayaan-ahmed': {
+    name: 'Ayaan Ahmed',
+    roles: ['Technical Coordinator'],
+    linkedin: 'https://www.linkedin.com/in/ayaan-ahmed-477289330/',
+  },
+  'wiktoria-kalwaj': {
+    name: 'Wiktoria Kalwaj',
+    roles: ['Graphic Designer'],
+  },
+  'charanpreet-kaur': {
+    name: 'Charanpreet Kaur',
+    roles: [],
+    linkedin: 'https://www.linkedin.com/in/charanpreet--kaur/',
+  },
+  'george-james': {
+    name: 'George James',
+    roles: [],
+    linkedin: 'https://www.linkedin.com/in/georgeojames/',
+  },
+} satisfies Record<string, Person>
+
+type PersonId = keyof typeof PEOPLE
+
+/* In rank order: the President spans the row, the rest sit beneath. */
+const LEADERSHIP: PersonId[] = ['bilal-arshad', 'haarisah-hussain', 'tayyeb-nadeem-somro']
+
+const COMMITTEE: PersonId[] = [
+  'michael-martinak',
+  'maryam-ahmad',
+  'saifuddin-muhammad',
+  'baber-khan',
+  'ivan-khan',
+  'daeron-wallace',
+  'arsalan-abid',
+  'muhammad-hamza-rafeh',
+  'mukul-sharma',
+  'mohamed-dahir',
+  'ayaan-ahmed',
+  'wiktoria-kalwaj',
+]
+
+/* Research has its own titles: Bilal is a researcher here, not President. */
+const RESEARCH: { id: PersonId; title: string }[] = [
+  { id: 'michael-martinak', title: 'Head of Research' },
+  { id: 'bilal-arshad',     title: 'Researcher' },
+  { id: 'baber-khan',       title: 'Researcher' },
+  { id: 'charanpreet-kaur', title: 'Researcher' },
+  { id: 'george-james',     title: 'Researcher' },
 ]
 
 const APPLY_URL = 'https://tally.so/r/681g7e'
 
-/* ── Helpers ───────────────────────────────────────────────── */
+/* ── Pieces ────────────────────────────────────────────────── */
 function initials(name: string) {
-  return name.split(' ').map(p => p[0]).join('').slice(0, 3).toUpperCase()
+  const parts = name.split(' ')
+  return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase()
 }
 
-function LinkedInMark({ size = 12 }: { size?: number }) {
+function Avatar({ name, size }: { name: string; size: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="flex items-center justify-center rounded-full font-semibold flex-shrink-0"
+      style={{
+        width: size,
+        height: size,
+        fontSize: Math.round(size * 0.36),
+        color: 'var(--color-accent-text)',
+        background: 'var(--color-accent-dim)',
+        border: '1px solid rgba(59,130,246,0.3)',
+      }}
+    >
+      {initials(name)}
+    </div>
+  )
+}
+
+function LinkedInMark({ size }: { size: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -215,575 +177,164 @@ function LinkedInMark({ size = 12 }: { size?: number }) {
   )
 }
 
-/* ── Social links ──────────────────────────────────────────── */
-function SocialLinks({ person, size = 26 }: { person: Person; size?: number }) {
-  const box = { width: size, height: size }
+const iconLink =
+  'w-8 h-8 flex items-center justify-center rounded-lg border border-[var(--color-border-subtle)] text-[var(--color-muted)] hover:text-[var(--color-text)] hover:border-[var(--color-border)] hover:bg-[var(--color-surface-hover)] transition-colors focus-ring'
+
+function SocialLinks({ person }: { person: Person }) {
+  if (!person.linkedin && !person.website && !person.email) return null
   return (
     <div className="flex items-center gap-1.5">
       {person.linkedin && (
-        <Link
-          href={person.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={e => e.stopPropagation()}
-          style={box}
-          className="flex items-center justify-center rounded-lg border transition-[background-color,border-color,transform] duration-200 ease-out
-                     text-[#0A66C2] bg-[rgba(10,102,194,0.12)] border-[rgba(10,102,194,0.28)]
-                     hover:bg-[rgba(10,102,194,0.24)] hover:border-[rgba(10,102,194,0.55)] hover:-translate-y-px
-                     focus-ring"
-          aria-label={`${person.name} on LinkedIn`}
-        >
-          <LinkedInMark size={size > 30 ? 14 : 12} />
-        </Link>
+        <a href={person.linkedin} target="_blank" rel="noopener noreferrer" className={iconLink} aria-label={`${person.name} on LinkedIn`}>
+          <LinkedInMark size={13} />
+        </a>
       )}
       {person.website && (
-        <Link
-          href={person.website}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={e => e.stopPropagation()}
-          style={box}
-          className="flex items-center justify-center rounded-lg border transition-[background-color,border-color,color,transform] duration-200 ease-out
-                     text-[var(--color-muted)] bg-[rgba(var(--hairline-rgb),0.05)] border-[rgba(var(--hairline-rgb),0.1)]
-                     hover:text-[var(--color-text)] hover:bg-[rgba(var(--hairline-rgb),0.11)] hover:border-[rgba(var(--hairline-rgb),0.22)] hover:-translate-y-px
-                     focus-ring"
-          aria-label={`${person.name}'s personal website`}
-        >
-          <Globe size={size > 30 ? 14 : 12} />
-        </Link>
+        <a href={person.website} target="_blank" rel="noopener noreferrer" className={iconLink} aria-label={`${person.name}'s website`}>
+          <Globe size={14} aria-hidden="true" />
+        </a>
       )}
       {person.email && (
-        <a
-          href={`mailto:${person.email}`}
-          onClick={e => e.stopPropagation()}
-          style={box}
-          title={person.email}
-          className="flex items-center justify-center rounded-lg border transition-[background-color,border-color,color,transform] duration-200 ease-out
-                     text-[var(--color-accent-text)] bg-[var(--color-accent-dim)] border-[rgba(59,130,246,0.28)]
-                     hover:bg-[rgba(59,130,246,0.24)] hover:border-[rgba(59,130,246,0.55)] hover:-translate-y-px
-                     focus-ring"
-          aria-label={`Email ${person.name}`}
-        >
-          <Mail size={size > 30 ? 14 : 12} />
+        <a href={`mailto:${person.email}`} className={iconLink} aria-label={`Email ${person.name}`} title={person.email}>
+          <Mail size={14} aria-hidden="true" />
         </a>
       )}
     </div>
   )
 }
 
-/* ── Member row ────────────────────────────────────────────────
-   A row inside a department, not a card: the section owns the border,
-   so nothing is nested inside anything else.
-   ──────────────────────────────────────────────────────────── */
-function MemberRow({
-  person, role, group, index, stagger, reduced,
-}: {
-  person: Person
-  role: Role
-  group: Group
-  index: number
-  stagger: boolean
-  reduced: boolean
-}) {
-  const vacant = person.vacant
-
-  // Where else this person sits, so a second appearance never reads as a duplicate.
-  const elsewhere = person.roles
-    .filter(r => r.group !== group.id)
-    .map(r => GROUP_BY_ID[r.group].short ?? GROUP_BY_ID[r.group].label)
-
-  const inner = (
-    <>
-      <div
-        className="flex items-center justify-center rounded-xl text-[12px] font-bold tracking-wide flex-shrink-0 transition-shadow duration-300"
-        style={{
-          width: 38,
-          height: 38,
-          color: 'var(--color-text)',
-          background: vacant ? 'rgba(var(--hairline-rgb),0.04)' : `${group.color}${role.lead ? '2e' : '1a'}`,
-          border: vacant
-            ? '1px dashed rgba(var(--hairline-rgb),0.22)'
-            : `1px solid ${group.color}${role.lead ? '80' : '3d'}`,
-          boxShadow: role.lead && !vacant ? `0 0 18px ${group.color}33` : 'none',
-        }}
-      >
-        {vacant
-          ? <span className="text-[var(--color-muted)] text-[14px] font-normal leading-none">+</span>
-          : initials(person.name)}
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <p
-          className="text-[13.5px] font-semibold leading-tight truncate"
-          style={{ color: vacant ? 'var(--color-muted)' : 'var(--color-text)' }}
-        >
-          {vacant ? 'Open role' : person.name}
-        </p>
-        <p className="text-[13px] leading-snug text-[var(--color-muted)] mt-0.5 truncate">
-          {role.title}
-          {elsewhere.length > 0 && (
-            <span className="text-[var(--color-muted-2)]"> · also in {elsewhere.join(', ')}</span>
-          )}
-        </p>
-      </div>
-
-      {vacant ? (
-        <span className="flex items-center gap-1.5 flex-shrink-0 text-[12px] font-medium text-[var(--color-accent-text)]">
-          Apply
-          <ArrowUpRight size={13} className="transition-transform duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </span>
-      ) : (
-        <div className="flex-shrink-0">
-          <SocialLinks person={person} />
-        </div>
-      )}
-    </>
-  )
-
-  const motionProps = {
-    initial: reduced ? { opacity: 0 } : { opacity: 0, y: 8 },
-    animate: { opacity: 1, y: 0 },
-    transition: {
-      duration: reduced ? 0.001 : 0.32,
-      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
-      delay: stagger ? Math.min(index, 10) * 0.03 : 0,
-    },
-    className:
-      'group flex items-center gap-3.5 px-3 py-2.5 -mx-3 rounded-xl transition-colors duration-200 hover:bg-[rgba(var(--hairline-rgb),0.045)]',
-  }
-
-  if (vacant) {
-    return (
-      <motion.a
-        {...motionProps}
-        href={APPLY_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`${motionProps.className} focus-ring`}
-      >
-        {inner}
-      </motion.a>
-    )
-  }
-
-  return <motion.div {...motionProps}>{inner}</motion.div>
-}
-
-/* ── Department section ────────────────────────────────────────
-   One heading per area, its lead first, then everyone else.
-   ──────────────────────────────────────────────────────────── */
-const DepartmentSection = forwardRef<HTMLElement, {
-  group: Group
-  people: { person: Person; role: Role }[]
-  stagger: boolean
-  reduced: boolean
-}>(function DepartmentSection({ group, people, stagger, reduced }, ref) {
-  // Featured leads appear as cards at the top of the leadership section.
-  const featured = group.id === 'leadership'
-    ? people.filter(p => LEADS.some(l => l.id === p.person.id))
-    : []
-  const rows = people.filter(p => !featured.includes(p))
-
+function SectionHeading({ id, title, aside }: { id: string; title: string; aside?: React.ReactNode }) {
   return (
-    <motion.section
-      ref={ref as React.Ref<HTMLElement>}
-      layout={reduced ? false : 'position'}
-      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={reduced ? { opacity: 0 } : { opacity: 0, y: -6, transition: { duration: 0.16, ease: 'easeIn' } }}
-      transition={{
-        duration: reduced ? 0.001 : 0.34,
-        ease: [0.16, 1, 0.3, 1],
-        layout: reduced ? { duration: 0 } : { type: 'spring', stiffness: 420, damping: 40 },
-      }}
-      aria-label={group.label}
-    >
-      {/* Heading */}
-      <div className="flex items-baseline gap-2.5 mb-1">
-        <span
-          className="block rounded-full flex-shrink-0 translate-y-[-1px]"
-          style={{ width: 7, height: 7, background: group.color, boxShadow: `0 0 8px ${group.color}` }}
-          aria-hidden="true"
-        />
-        <h2 className="text-[12px] font-bold uppercase tracking-[0.12em] text-[var(--color-text)]">
-          {group.label}
-        </h2>
-        <span className="ml-auto text-[12px] tabular-nums text-[var(--color-muted)]">
-          {people.length} {people.length === 1 ? 'person' : 'people'}
-        </span>
-      </div>
-
-      <div
-        className="h-px mb-2"
-        style={{ background: `linear-gradient(90deg, ${group.color}59 0%, rgba(var(--hairline-rgb),0.07) 45%, transparent 100%)` }}
-      />
-
-      {/* The President takes the full width as the spotlight; the rest of
-          the featured leadership sits in a row beneath, two or three across. */}
-      {featured.length > 0 && (
-        <div className={`grid grid-cols-1 gap-4 mt-3 mb-4 ${featured.length > 3 ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
-          {featured.map(({ person }, i) => (
-            <LeaderCard
-              key={person.id}
-              person={person}
-              index={i}
-              reduced={reduced}
-              spotlight={i === 0}
-              compact={featured.length > 3}
-            />
-          ))}
-        </div>
-      )}
-
-      <div className="flex flex-col">
-        {rows.map(({ person, role }, i) => (
-          <MemberRow
-            key={`${person.id}-${group.id}`}
-            person={person}
-            role={role}
-            group={group}
-            index={i}
-            stagger={stagger}
-            reduced={reduced}
-          />
-        ))}
-      </div>
-    </motion.section>
-  )
-})
-
-
-/* ── Masthead card ─────────────────────────────────────────────
-   The featured leadership at the top of the Leadership section. The first
-   lead (the President) is drawn larger across the full width. Role chips
-   still answer the active filter.
-   ──────────────────────────────────────────────────────────── */
-function LeaderCard({
-  person, index, reduced, spotlight = false, compact = false,
-}: {
-  person: Person
-  index: number
-  reduced: boolean
-  spotlight?: boolean
-  /** Three-across row: too narrow for the avatar to sit beside the text. */
-  compact?: boolean
-}) {
-  const [title, ...rest] = person.roles
-  /* A seat carrying the same title as the badge (Head of Research sits in both
-   * Leadership and R&D) would render the card's own title back at it as a chip. */
-  const otherRoles = rest.filter(r => r.title !== title.title)
-
-  return (
-    <motion.div
-      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.985 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{
-        duration: reduced ? 0.001 : 0.55,
-        ease: [0.16, 1, 0.3, 1],
-        delay: reduced ? 0 : 0.07 + index * 0.08,
-      }}
-      className={`relative overflow-hidden rounded-2xl border flex flex-col justify-center ${
-        spotlight ? 'md:col-span-full p-6 sm:p-8' : 'p-5 sm:p-6'
-      }`}
-      style={{
-        background: 'var(--card-gradient)',
-        borderColor: spotlight ? 'rgba(59,130,246,0.42)' : 'rgba(59,130,246,0.28)',
-        boxShadow: spotlight ? '0 0 64px rgba(59,130,246,0.16)' : '0 0 44px rgba(59,130,246,0.09)',
-      }}
-    >
-      {/* Indigo bloom, drawn once on entry */}
-      <motion.div
-        aria-hidden="true"
-        className="absolute pointer-events-none"
-        style={{
-          top: -150, right: -110, width: spotlight ? 420 : 320, height: spotlight ? 420 : 320,
-          background: 'radial-gradient(circle, rgba(59,130,246,0.22) 0%, transparent 68%)',
-        }}
-        initial={reduced ? { opacity: 0.6 } : { opacity: 0, scale: 0.7 }}
-        animate={{ opacity: 0.6, scale: 1 }}
-        transition={{
-          duration: reduced ? 0.001 : 1.1,
-          ease: [0.16, 1, 0.3, 1],
-          delay: reduced ? 0 : 0.2 + index * 0.08,
-        }}
-      />
-
-      {/* In a three-across row there's no room beside the avatar for a long
-          title badge, so those cards stack it above the text from md up. */}
-      <div className={`relative flex items-start ${spotlight ? 'gap-5' : compact ? 'gap-4 md:flex-col md:gap-3' : 'gap-4'}`}>
-        <div
-          className={`flex items-center justify-center rounded-2xl font-bold flex-shrink-0 ${
-            spotlight ? 'text-[20px]' : 'text-[16px]'
-          }`}
-          style={{
-            width: spotlight ? 72 : 56, height: spotlight ? 72 : 56,
-            color: 'var(--color-text)',
-            background: 'rgba(59,130,246,0.18)',
-            border: '1px solid rgba(59,130,246,0.5)',
-            boxShadow: '0 0 26px rgba(59,130,246,0.22)',
-          }}
-        >
-          {initials(person.name)}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <span
-            className="inline-block mb-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.14em] whitespace-nowrap"
-            style={{
-              background: 'rgba(59,130,246,0.14)',
-              color: 'var(--color-text)',
-              border: '1px solid rgba(59,130,246,0.32)',
-            }}
-          >
-            {title.title}
-          </span>
-          <p
-            className="font-bold text-[var(--color-text)] leading-tight"
-            style={{ fontSize: spotlight ? '1.75rem' : '1.25rem', letterSpacing: '-0.02em', textWrap: 'balance' }}
-          >
-            {person.name}
-          </p>
-
-          {/* Any other seats they hold. The one matching the active filter
-              lights up, so the masthead answers the filter too. */}
-          {otherRoles.length > 0 && (
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
-              {otherRoles.map(r => {
-                const g = GROUP_BY_ID[r.group]
-                return (
-                  <span
-                    key={r.group}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] border"
-                    style={{
-                      color: 'var(--color-muted)',
-                      background: 'rgba(var(--hairline-rgb),0.04)',
-                      borderColor: 'rgba(var(--hairline-rgb),0.09)',
-                    }}
-                  >
-                    <span
-                      className="block rounded-full flex-shrink-0"
-                      style={{ width: 5, height: 5, background: g.color }}
-                      aria-hidden="true"
-                    />
-                    {r.title} · {g.short ?? g.label}
-                  </span>
-                )
-              })}
-            </div>
-          )}
-
-          <div className="mt-3">
-            <SocialLinks person={person} size={30} />
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-/* ── Filter pill ───────────────────────────────────────────── */
-function FilterPill({
-  label, count, color, active, onClick, reduced,
-}: {
-  label: string
-  count: number
-  color?: string
-  active: boolean
-  onClick: () => void
-  reduced: boolean
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-pressed={active}
-      className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-200 focus-ring"
-      style={{ color: active ? 'var(--color-text)' : 'var(--color-muted)' }}
-    >
-      {active && (
-        <motion.span
-          layoutId="committee-filter-pill"
-          className="absolute inset-0 rounded-full border"
-          style={{
-            background: color ? `${color}1f` : 'rgba(var(--hairline-rgb),0.09)',
-            borderColor: color ? `${color}66` : 'rgba(var(--hairline-rgb),0.2)',
-          }}
-          transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 500, damping: 42 }}
-        />
-      )}
-      {color && (
-        <span
-          className="relative block rounded-full flex-shrink-0"
-          style={{
-            width: 6, height: 6, background: color,
-            boxShadow: active ? `0 0 8px ${color}` : 'none',
-          }}
-          aria-hidden="true"
-        />
-      )}
-      <span className="relative whitespace-nowrap">{label}</span>
-      <span
-        className="relative text-[12px] tabular-nums"
-        style={{ color: 'var(--color-muted)' }}
-      >
-        {count}
-      </span>
-    </button>
+    <div className="flex items-baseline justify-between gap-4 mb-5">
+      <h2 id={id} className="text-[22px] sm:text-[24px] font-bold tracking-[-0.02em] text-[var(--color-text)]">{title}</h2>
+      {aside}
+    </div>
   )
 }
 
 /* ── Page ──────────────────────────────────────────────────── */
 export default function CommitteePage() {
-  const [filter, setFilter] = useState<GroupId | 'all'>('all')
-  /* Initial animation states must match between server and client, so they
-   * can't branch on the media query; MotionConfig below makes framer honour
-   * reduced motion itself. `reduced` still switches off the springier
-   * layout motion, but only once mounted. */
-  const prefersReduced = useReducedMotion()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  const reduced = mounted && !!prefersReduced
-
-  // Stagger the grid once on first paint, then never again — refiltering
-  // should read as a reflow, not as the page loading a second time.
-  const firstPaint = useRef(true)
-  const stagger = firstPaint.current
-  if (typeof window !== 'undefined') firstPaint.current = false
-
-  const everyone = useMemo(() => [...LEADS, ...COMMITTEE], [])
-
-  // One bucket per area, leads listed first inside each.
-  const sections = useMemo(() => {
-    return GROUPS.map(group => {
-      const people = everyone
-        .flatMap(person => person.roles
-          .filter(r => r.group === group.id)
-          .map(role => ({ person, role })))
-        .sort((a, b) => Number(!!b.role.lead) - Number(!!a.role.lead))
-      return { group, people }
-    }).filter(s => s.people.length > 0)
-  }, [everyone])
-
-  const counts = useMemo(
-    () => new Map(sections.map(s => [s.group.id, s.people.length] as const)),
-    [sections],
-  )
-
-  const visibleSections = useMemo(
-    () => (filter === 'all' ? sections : sections.filter(s => s.group.id === filter)),
-    [sections, filter],
-  )
-
-  // Headcount, not seat count: nobody is counted twice for holding two roles.
-  const shownCount = useMemo(
-    () => new Set(visibleSections.flatMap(s => s.people.map(p => p.person.id))).size,
-    [visibleSections],
-  )
-
-  const departments = GROUPS.filter(g => g.kind === 'department')
-  const teams = GROUPS.filter(g => g.kind === 'team')
+  const memberCount = new Set([...LEADERSHIP, ...COMMITTEE]).size
 
   return (
-    <MotionConfig reducedMotion="user">
-    <div className="max-w-[960px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
-
-      {/* ── Header ─────────────────────────────────────────── */}
-      <motion.header
-        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduced ? 0.001 : 0.45, ease: [0.16, 1, 0.3, 1] }}
-        className="mb-9"
-      >
+    <div className="max-w-[1080px] mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20">
+      <header className="enter mb-12">
         <h1 className="page-title mb-3">Meet the committee</h1>
         <p className="page-lede">
-          {everyone.length} students running BCUComputingSoc across {departments.length} departments and {teams.length} teams.
-          Filter by the area you care about, or find someone to talk to.
+          The {memberCount} students who run BCUComputingSoc. Say hello at an event, or reach out on LinkedIn.
         </p>
-      </motion.header>
+      </header>
 
-      {/* ── Filters ────────────────────────────────────────── */}
-      <motion.div
-        initial={reduced ? { opacity: 0 } : { opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduced ? 0.001 : 0.4, ease: [0.16, 1, 0.3, 1], delay: reduced ? 0 : 0.14 }}
-        className="mb-5"
-      >
-        <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Filter committee by area">
-          <FilterPill
-            label="Everyone"
-            count={everyone.length}
-            active={filter === 'all'}
-            onClick={() => setFilter('all')}
-            reduced={reduced}
-          />
-          {GROUPS.map((g, i) => (
-            <span key={g.id} className="contents">
-              {(i === 1 || g.kind === 'team') && GROUPS[i - 1]?.kind !== g.kind && (
-                <span className="w-px h-4 mx-1.5 flex-shrink-0" style={{ background: 'rgba(var(--hairline-rgb),0.12)' }} aria-hidden="true" />
-              )}
-              <FilterPill
-                label={g.short ?? g.label}
-                count={counts.get(g.id) ?? 0}
-                color={g.color}
-                active={filter === g.id}
-                onClick={() => setFilter(filter === g.id ? 'all' : g.id)}
-                reduced={reduced}
-              />
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-3 flex items-center gap-2 text-[12px] text-[var(--color-muted)]">
-          <span className="tabular-nums">
-            Showing {shownCount} of {everyone.length}
-          </span>
-          {filter !== 'all' && (
-            <>
-              <span aria-hidden="true">·</span>
-              <button
-                onClick={() => setFilter('all')}
-                className="underline underline-offset-2 hover:text-[var(--color-text)] transition-colors focus-ring rounded"
+      {/* ── Leadership ─────────────────────────────────────── */}
+      <section aria-labelledby="leadership" className="mb-14">
+        <h2 id="leadership" className="sr-only">Leadership</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {LEADERSHIP.map((id, i) => {
+            const p: Person = PEOPLE[id]
+            const top = i === 0
+            return (
+              <article
+                key={id}
+                className={`enter relative overflow-hidden rounded-2xl border flex items-center gap-5 ${top ? 'md:col-span-2 p-6 sm:p-8' : 'p-6 sm:p-7'}`}
+                style={{
+                  '--i': i + 1,
+                  background: 'var(--card-gradient)',
+                  borderColor: 'rgba(59,130,246,0.3)',
+                } as React.CSSProperties}
               >
-                Clear filter
-              </button>
-            </>
-          )}
+                <div
+                  aria-hidden="true"
+                  className="absolute pointer-events-none -top-32 -right-24 w-72 h-72"
+                  style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 68%)' }}
+                />
+                <div className="relative">
+                  <Avatar name={p.name} size={top ? 80 : 64} />
+                </div>
+                <div className="relative min-w-0 flex-1">
+                  <p className="text-[13px] font-semibold text-[var(--color-accent-text)]">{p.roles.join(' · ')}</p>
+                  <h3 className={`mt-0.5 ${top ? 'text-[24px] sm:text-[30px]' : 'text-[22px] sm:text-[24px]'} font-bold tracking-[-0.02em] leading-tight text-[var(--color-text)]`}>
+                    {p.name}
+                  </h3>
+                  <div className="mt-3">
+                    <SocialLinks person={p} />
+                  </div>
+                </div>
+              </article>
+            )
+          })}
         </div>
-      </motion.div>
+      </section>
 
-      {/* ── Directory ──────────────────────────────────────── */}
-      <motion.div
-        layout={reduced ? false : true}
-        transition={reduced ? { duration: 0 } : { layout: { type: 'spring', stiffness: 420, damping: 40 } }}
-        className="flex flex-col gap-9"
-      >
-        <AnimatePresence mode="popLayout" initial={false}>
-          {visibleSections.map(({ group, people }) => (
-            <DepartmentSection
-              key={group.id}
-              group={group}
-              people={people}
-              stagger={stagger}
-              reduced={reduced}
-            />
-          ))}
-        </AnimatePresence>
-      </motion.div>
+      {/* ── Committee ──────────────────────────────────────── */}
+      <section aria-labelledby="committee" className="mb-14">
+        <SectionHeading id="committee" title="Committee" />
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {COMMITTEE.map((id, i) => {
+            const p: Person = PEOPLE[id]
+            return (
+              <li
+                key={id}
+                className="reveal card p-4 flex items-center gap-3.5"
+                style={{ '--i': i % 3 } as React.CSSProperties}
+              >
+                <Avatar name={p.name} size={44} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-semibold leading-tight text-[var(--color-text)] truncate">{p.name}</p>
+                  <p className="text-[13px] leading-snug text-[var(--color-muted)] mt-1">
+                    {p.roles.join(' · ')}
+                  </p>
+                </div>
+                <SocialLinks person={p} />
+              </li>
+            )
+          })}
+        </ul>
+      </section>
 
-      {/* ── Footer ─────────────────────────────────────────── */}
-      <div className="mt-12 pt-6" style={{ borderTop: '1px solid rgba(var(--hairline-rgb),0.07)' }}>
-        <p className="text-[12px] text-[var(--color-muted)] text-center">
-          Interested in joining the committee?{' '}
-          <Link
-            href={APPLY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[var(--color-accent-text)] hover:underline focus-ring rounded"
-          >
-            Apply here →
-          </Link>
-        </p>
-      </div>
+      {/* ── Research ───────────────────────────────────────── */}
+      <section aria-labelledby="research">
+        <SectionHeading
+          id="research"
+          title="Research"
+          aside={
+            <Link
+              href="/research"
+              className="group inline-flex items-center gap-1 text-[14px] font-medium text-[var(--color-accent-text)] hover:underline rounded focus-ring"
+            >
+              See our research
+              <ArrowRight size={14} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          }
+        />
+        <ul className="card divide-y divide-[var(--color-border-subtle)]">
+          {RESEARCH.map(({ id, title }, i) => {
+            const p: Person = PEOPLE[id]
+            return (
+              <li key={id} className="reveal flex items-center gap-3.5 px-4 py-3" style={{ '--i': i } as React.CSSProperties}>
+                <Avatar name={p.name} size={36} />
+                <div className="min-w-0 flex-1 sm:flex sm:items-baseline sm:gap-3">
+                  <p className="text-[15px] font-semibold text-[var(--color-text)] truncate">{p.name}</p>
+                  <p className="text-[13px] text-[var(--color-muted)]">{title}</p>
+                </div>
+                <SocialLinks person={p} />
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+
+      <p className="mt-14 text-center text-[14px] text-[var(--color-muted)]">
+        Interested in joining the committee?{' '}
+        <a
+          href={APPLY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-0.5 font-medium text-[var(--color-accent-text)] hover:underline rounded focus-ring"
+        >
+          Apply here
+          <ArrowUpRight size={14} aria-hidden="true" />
+        </a>
+      </p>
     </div>
-    </MotionConfig>
   )
 }

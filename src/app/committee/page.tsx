@@ -55,7 +55,7 @@ const PEOPLE = {
   },
   'baber-khan': {
     name: 'Baber Khan',
-    roles: ['Developer'],
+    roles: [],
     linkedin: 'https://www.linkedin.com/in/baberr/',
     website: 'https://baberr.com',
   },
@@ -122,7 +122,6 @@ const COMMITTEE: PersonId[] = [
   'michael-martinak',
   'maryam-ahmad',
   'saifuddin-muhammad',
-  'baber-khan',
   'ivan-khan',
   'daeron-wallace',
   'arsalan-abid',

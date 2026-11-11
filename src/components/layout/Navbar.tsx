@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, FileText, FolderOpen, Rocket, ArrowUpRight, ArrowRight, Menu, X, Linkedin } from 'lucide-react'
+import { ChevronDown, FileText, ScanSearch, FolderOpen, Rocket, ArrowUpRight, ArrowRight, Menu, X, Linkedin } from 'lucide-react'
 import { ThemeToggle } from '@/components/layout/ThemeToggle'
 import { Wordmark } from '@/components/ui/Wordmark'
 
@@ -25,6 +25,7 @@ const navLinksAfterResources = [
 const CV_HREF = '/cv-builder'
 
 const resourceLinks = [
+  { href: '/ats-checker', label: 'ATS CV Checker', desc: 'Score your CV and see what to fix', Icon: ScanSearch, external: false },
   { href: '/resources',  label: 'Documents',  desc: 'Templates, guides and cheat sheets', Icon: FolderOpen, external: false },
   { href: 'https://sca-project-finder.vercel.app/', label: 'Project Marketplace', desc: 'Find and join student project teams', Icon: Rocket, external: true },
 ]

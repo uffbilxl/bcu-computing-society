@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { FileText, Download, Zap, BookOpen, Mail, ArrowUpRight, type LucideIcon } from 'lucide-react'
+import { FileText, Download, Zap, BookOpen, Mail, ArrowUpRight, ArrowRight, ScanSearch, type LucideIcon } from 'lucide-react'
 
 interface Resource {
   title: string
@@ -107,6 +107,22 @@ const CATEGORIES: Category[] = [
   },
 ]
 
+const TOOLS: { href: string; title: string; description: string; Icon: LucideIcon; isNew?: boolean }[] = [
+  {
+    href: '/ats-checker',
+    title: 'ATS CV Checker',
+    description: 'Upload your CV for a score out of 100 and a list of what to fix. Nothing leaves your device.',
+    Icon: ScanSearch,
+    isNew: true,
+  },
+  {
+    href: '/cv-builder',
+    title: 'CV Builder',
+    description: 'Build a one-page, ATS-friendly CV and download it as a PDF. No sign-up.',
+    Icon: FileText,
+  },
+]
+
 function fileType(url: string): string {
   if (url.endsWith('.pdf')) return 'PDF'
   if (url.endsWith('.docx')) return 'DOCX'
@@ -137,6 +153,39 @@ export default function ResourcesPage() {
           ))}
         </nav>
       </header>
+
+      {/* Tools that run on the site, as opposed to files to download */}
+      <section aria-labelledby="tools-title" className="reveal mt-12">
+        <h2 id="tools-title" className="sr-only">Tools</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {TOOLS.map(tool => (
+            <Link
+              key={tool.href}
+              href={tool.href}
+              className="group card-interactive p-5 flex items-start gap-4 focus-ring"
+            >
+              <span
+                className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-white"
+                style={{ background: 'var(--color-accent)' }}
+              >
+                <tool.Icon size={20} aria-hidden="true" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[16px] font-semibold text-[var(--color-text)]">{tool.title}</span>
+                  {tool.isNew && <span className="badge-blue">New</span>}
+                </span>
+                <span className="block text-[14px] leading-relaxed text-[var(--color-muted)] mt-0.5">{tool.description}</span>
+              </span>
+              <ArrowRight
+                size={16}
+                aria-hidden="true"
+                className="mt-1 flex-shrink-0 text-[var(--color-accent-text)] transition-transform duration-200 group-hover:translate-x-0.5"
+              />
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <div className="mt-12 flex flex-col gap-14">
         {CATEGORIES.map(cat => {

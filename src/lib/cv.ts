@@ -100,7 +100,7 @@ export const DEFAULT_CV: CVData = {
       org: 'Barclays',
       role: 'Insight Day',
       location: 'Knutsford, UK',
-      dates: 'April 2026',
+      dates: 'Apr 2026',
       bullets: [
         'Participated in a competitive spring insight programme at Barclays, gaining exposure to financial services, technology, and investment banking operations.',
         'Took part in networking sessions, commercial awareness workshops, and team-based case studies with Barclays professionals and fellow students.',

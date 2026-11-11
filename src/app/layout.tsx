@@ -43,6 +43,7 @@ const footerLinks = [
   { href: '/committee', label: 'Committee' },
   { href: '/research', label: 'Research' },
   { href: '/cv-builder', label: 'CV Builder' },
+  { href: '/ats-checker', label: 'ATS CV Checker' },
   { href: '/resources', label: 'Resources' },
   { href: '/about', label: 'About' },
 ]

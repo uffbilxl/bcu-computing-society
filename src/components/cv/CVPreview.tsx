@@ -2,7 +2,7 @@
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { X } from 'lucide-react'
 import {
-  CVData, CVEntry, SectionKey, SECTION_TITLES, ACTION_VERBS,
+  CVData, CVEntry, SectionKey, sectionTitle as titleFor, ACTION_VERBS,
   startsWithActionVerb, findWeakPhrases, bulletLengthIssue,
 } from '@/lib/cv'
 
@@ -81,7 +81,7 @@ export function CVPreview({
         letterSpacing: '0.02em',
       }}
     >
-      {SECTION_TITLES[key]}
+      {titleFor(data, key)}
     </h2>
   )
 

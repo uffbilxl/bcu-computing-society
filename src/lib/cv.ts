@@ -31,6 +31,8 @@ export interface CVData {
   extracurricular: CVEntry[]
   skills: SkillRow[]
   sectionOrder: SectionKey[]
+  /** Headings the user has renamed. Absent or blank means the default title. */
+  sectionTitles?: Partial<Record<SectionKey, string>>
 }
 
 export const SECTION_TITLES: Record<SectionKey, string> = {
@@ -39,6 +41,13 @@ export const SECTION_TITLES: Record<SectionKey, string> = {
   experience:      'Work Experience',
   extracurricular: 'Extracurricular Activities',
   skills:          'Skills & Interests',
+}
+
+export const SECTION_TITLE_MAX = 40
+
+/** The heading to print for a section: the user's own, or the default. */
+export function sectionTitle(data: CVData, key: SectionKey): string {
+  return data.sectionTitles?.[key]?.trim() || SECTION_TITLES[key]
 }
 
 export const SUMMARY_MAX = 360

@@ -4,10 +4,10 @@ import {
 } from 'react'
 import {
   Download, RotateCcw, Plus, Trash2, ChevronUp, ChevronDown,
-  Check, X, ChevronRight, Sparkles,
+  Check, X, ChevronRight, Sparkles, Pencil,
 } from 'lucide-react'
 import {
-  CVData, CVEntry, SectionKey, DEFAULT_CV, STORAGE_KEY, SECTION_TITLES,
+  CVData, CVEntry, SectionKey, DEFAULT_CV, STORAGE_KEY, SECTION_TITLES, SECTION_TITLE_MAX,
   SUMMARY_MAX, BULLET_MAX, atsReport,
 } from '@/lib/cv'
 import { CVPreview, PAGE_W, PAGE_H, Density } from '@/components/cv/CVPreview'
@@ -44,9 +44,13 @@ function Field({
 }
 
 function Card({
-  title, note, onMoveUp, onMoveDown, children,
+  title, customTitle, onTitleChange, note, onMoveUp, onMoveDown, children,
 }: {
   title: string
+  /** The user's own heading; blank falls back to `title`. */
+  customTitle?: string
+  /** When given, the heading is an editable field. */
+  onTitleChange?: (v: string) => void
   note?: string
   onMoveUp?: () => void
   onMoveDown?: () => void
@@ -55,7 +59,26 @@ function Card({
   return (
     <div className="card p-5">
       <div className="flex items-center gap-2 mb-4">
-        <h2 className="text-sm font-semibold text-[var(--color-text)]">{title}</h2>
+        {onTitleChange ? (
+          <h2 className="group/title relative min-w-0 flex-1 max-w-[260px]">
+            <Pencil
+              size={12}
+              aria-hidden="true"
+              className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[var(--color-muted-2)] group-focus-within/title:opacity-0 transition-opacity"
+            />
+            <input
+              value={customTitle ?? ''}
+              onChange={e => onTitleChange(e.target.value)}
+              placeholder={title}
+              maxLength={SECTION_TITLE_MAX}
+              aria-label={`Heading for the ${title} section`}
+              title="Click to rename this heading"
+              className="w-full h-8 pl-2 pr-7 rounded-lg border border-[var(--color-border-subtle)] bg-transparent text-sm font-semibold text-[var(--color-text)] placeholder:text-[var(--color-text)] hover:border-[var(--color-border)] focus:border-[var(--color-accent)] focus:placeholder:text-[var(--color-muted-2)] outline-none transition-colors"
+            />
+          </h2>
+        ) : (
+          <h2 className="text-sm font-semibold text-[var(--color-text)]">{title}</h2>
+        )}
         {note && <span className="text-[11px] text-[var(--color-muted-2)]">{note}</span>}
         {(onMoveUp || onMoveDown) && (
           <div className="ml-auto flex items-center gap-1">
@@ -260,6 +283,9 @@ export function CVBuilderClient() {
 
   const orderIndex = (key: SectionKey) => data.sectionOrder.indexOf(key)
 
+  const renameSection = (key: SectionKey, title: string) =>
+    setData(d => ({ ...d, sectionTitles: { ...d.sectionTitles, [key]: title } }))
+
   const entrySectionEditor = (section: EntrySectionKey) => {
     const labels = ENTRY_LABELS[section]
     const entries = data[section]
@@ -268,6 +294,8 @@ export function CVBuilderClient() {
       <Card
         key={section}
         title={SECTION_TITLES[section]}
+        customTitle={data.sectionTitles?.[section]}
+        onTitleChange={v => renameSection(section, v)}
         note={entries.length === 0 ? 'Empty (hidden on the CV)' : undefined}
         onMoveUp={idx > 0 ? () => moveSection(section, -1) : undefined}
         onMoveDown={idx < data.sectionOrder.length - 1 ? () => moveSection(section, 1) : undefined}
@@ -342,6 +370,8 @@ export function CVBuilderClient() {
       <Card
         key="summary"
         title={SECTION_TITLES.summary}
+        customTitle={data.sectionTitles?.summary}
+        onTitleChange={v => renameSection('summary', v)}
         note="Optional (hidden when empty)"
         onMoveUp={orderIndex('summary') > 0 ? () => moveSection('summary', -1) : undefined}
         onMoveDown={orderIndex('summary') < data.sectionOrder.length - 1 ? () => moveSection('summary', 1) : undefined}
@@ -366,6 +396,8 @@ export function CVBuilderClient() {
       <Card
         key="skills"
         title={SECTION_TITLES.skills}
+        customTitle={data.sectionTitles?.skills}
+        onTitleChange={v => renameSection('skills', v)}
         onMoveUp={orderIndex('skills') > 0 ? () => moveSection('skills', -1) : undefined}
         onMoveDown={orderIndex('skills') < data.sectionOrder.length - 1 ? () => moveSection('skills', 1) : undefined}
       >

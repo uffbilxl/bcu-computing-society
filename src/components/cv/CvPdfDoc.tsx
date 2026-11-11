@@ -1,6 +1,6 @@
 'use client'
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
-import { CVData, CVEntry, SectionKey, SECTION_TITLES } from '@/lib/cv'
+import { CVData, CVEntry, SectionKey, sectionTitle } from '@/lib/cv'
 import type { Density } from '@/components/cv/CVPreview'
 
 /* Mirrors CVPreview's density scale, converted px → pt (×0.75) so the
@@ -90,7 +90,7 @@ export function CvPdfDoc({ data, density }: { data: CVData; density: Density }) 
       case 'summary':
         return (
           <View key={key}>
-            <Text style={s.sectionTitle}>{SECTION_TITLES[key]}</Text>
+            <Text style={s.sectionTitle}>{sectionTitle(data, key)}</Text>
             <Text>{data.summary}</Text>
           </View>
         )
@@ -100,7 +100,7 @@ export function CvPdfDoc({ data, density }: { data: CVData; density: Density }) 
         const entries = data[key].filter(e => e.org.trim() || e.role.trim() || e.bullets.some(b => b.trim()))
         return (
           <View key={key}>
-            <Text style={s.sectionTitle}>{SECTION_TITLES[key]}</Text>
+            <Text style={s.sectionTitle}>{sectionTitle(data, key)}</Text>
             {entries.map((e, i) => entryBlock(e, i === entries.length - 1))}
           </View>
         )
@@ -108,7 +108,7 @@ export function CvPdfDoc({ data, density }: { data: CVData; density: Density }) 
       case 'skills':
         return (
           <View key={key}>
-            <Text style={s.sectionTitle}>{SECTION_TITLES[key]}</Text>
+            <Text style={s.sectionTitle}>{sectionTitle(data, key)}</Text>
             {data.skills.filter(x => x.value.trim()).map(x => (
               <View key={x.id} style={s.skillRow}>
                 <Text style={s.skillLabel}>{x.label}:</Text>

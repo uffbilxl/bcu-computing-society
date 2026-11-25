@@ -101,16 +101,10 @@ const PEOPLE = {
     name: 'Wiktoria Kalwaj',
     roles: ['Graphic Designer'],
   },
-  'charanpreet-kaur': {
-    name: 'Charanpreet Kaur',
-    roles: [],
-    linkedin: 'https://www.linkedin.com/in/charanpreet--kaur/',
-  },
-  'george-james': {
-    name: 'George James',
-    roles: [],
-    linkedin: 'https://www.linkedin.com/in/georgeojames/',
-  },
+  // Researchers only. First names until we have their full names.
+  'oli': { name: 'Oli', roles: [] },
+  'victor': { name: 'Victor', roles: [] },
+  'tahsin': { name: 'Tahsin', roles: [] },
 } satisfies Record<string, Person>
 
 type PersonId = keyof typeof PEOPLE
@@ -134,11 +128,13 @@ const COMMITTEE: PersonId[] = [
 
 /* Research has its own titles: Bilal is a researcher here, not President. */
 const RESEARCH: { id: PersonId; title: string }[] = [
-  { id: 'michael-martinak', title: 'Head of Research' },
-  { id: 'bilal-arshad',     title: 'Researcher' },
-  { id: 'baber-khan',       title: 'Researcher' },
-  { id: 'charanpreet-kaur', title: 'Researcher' },
-  { id: 'george-james',     title: 'Researcher' },
+  { id: 'michael-martinak',    title: 'Head of Research' },
+  { id: 'bilal-arshad',        title: 'Researcher' },
+  { id: 'tayyeb-nadeem-somro', title: 'Researcher' },
+  { id: 'baber-khan',          title: 'Researcher' },
+  { id: 'oli',                 title: 'Researcher' },
+  { id: 'victor',              title: 'Researcher' },
+  { id: 'tahsin',              title: 'Assistant Researcher' },
 ]
 
 const APPLY_URL = 'https://tally.so/r/681g7e'
